@@ -1,11 +1,11 @@
 "use client";
 
+import { ChevronRight, Menu, ShoppingBag, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion } from "motion/react";
-import { ChevronRight, Menu, ShoppingBag, X } from "lucide-react";
-import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const NAV_LINKS = [
   { label: "Início", href: "/" },
@@ -31,18 +31,11 @@ export const Navbar = () => {
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/images/logo-icon.png"
+              src="/logo.png"
               alt="Brivan Sabor Logo"
-              width={48}
-              height={48}
+              width={200}
+              height={200}
               className="object-contain"
-            />
-            <Image
-              src="/images/logo-text.png"
-              alt="Brivan Sabor"
-              width={150}
-              height={40}
-              className="object-contain hidden sm:block"
             />
           </Link>
 
@@ -66,7 +59,7 @@ export const Navbar = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-brand-black/95 backdrop-blur-xl flex flex-col"
+            className="fixed inset-0 z-60 bg-brand-black/95 backdrop-blur-xl flex flex-col"
           >
             <div className="container mx-auto px-4 h-20 flex items-center justify-between border-b border-brand-soft-black">
               <span className="font-serif text-2xl text-brand-gold">Menu</span>

@@ -10,7 +10,7 @@ export const Footer = () => {
           <div>
             <Link href="/" className="flex items-center gap-2 mb-6">
               <Image
-                src="/images/logo-icon.png"
+                src="/icon.png"
                 alt="Brivan Sabor Logo"
                 width={64}
                 height={64}

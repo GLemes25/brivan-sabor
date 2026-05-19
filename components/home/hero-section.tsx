@@ -10,7 +10,7 @@ export const HeroSection = () => {
     <section className="relative w-full h-150 flex flex-col justify-center px-6 overflow-hidden">
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/hero-bg.png"
+          src="/hero-bg.png"
           alt="Mesa gourmet"
           fill
           className="object-cover object-right"
