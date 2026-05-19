@@ -15,6 +15,13 @@
 - **Links estilizados como botão:** Use `<Button asChild>` com `<Link href="...">` interno. **NUNCA** estilize uma tag `<a>` ou `<Link>` manualmente como botão.
 - **Páginas e Layouts:** **SEMPRE** verifique os componentes base disponíveis em `@components/ui/page.tsx` para garantir a reutilização da estrutura de página.
 
+## Imagens
+
+- **NUNCA** use a tag `<img>` nativa do HTML. **SEMPRE** use o componente `<Image />` do Next.js (`next/image`).
+- Para imagens de fundo que preenchem um container de altura definida, use `fill` + `className="object-cover"` e adicione `position: relative` ao container pai.
+- Para imagens com dimensões fixas conhecidas, use as props `width` e `height` explícitas.
+- Domínios externos (ex: `images.unsplash.com`) devem estar declarados em `remotePatterns` no `next.config.ts`.
+
 ## Estilização (Tailwind CSS)
 
 - **Cores do Tema:** **NUNCA** use cores hard-coded do Tailwind (como `text-white`, `bg-black`, `border-[#f1f1f1]`, `bg-[#2b54ff]`, etc.).
