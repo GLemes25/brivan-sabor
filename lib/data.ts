@@ -21,7 +21,8 @@ export const MOCK_PRODUCTS: Product[] = [
       "Massa leve e recheio cremoso. Nossa receita tradicional de família com frango desfiado premium e catupiry original.",
     price: 4.5,
     category: "salgados",
-    image: "/images/placeholder.png",
+    image:
+      "https://images.unsplash.com/photo-1583549322726-4407bfb42013?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id: "2",
@@ -30,7 +31,8 @@ export const MOCK_PRODUCTS: Product[] = [
       "Chocolate belga selecionado. Feito com cacau 70% e confeitos de chocolate puro.",
     price: 3.9,
     category: "doces",
-    image: "/images/placeholder.png",
+    image:
+      "https://images.unsplash.com/photo-1630953900113-ab915924aab2?q=80&w=435&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id: "3",
@@ -39,7 +41,8 @@ export const MOCK_PRODUCTS: Product[] = [
       "Queijos nobres, embutidos e acompanhamentos. Perfeita para harmonizar com vinhos e momentos inesquecíveis.",
     price: 129.9,
     category: "tabuas",
-    image: "/images/placeholder.png",
+    image:
+      "https://images.unsplash.com/photo-1629567971554-0cc0883dd57b?q=80&w=870&auto=format&fit=crop",
   },
   {
     id: "4",
@@ -49,7 +52,7 @@ export const MOCK_PRODUCTS: Product[] = [
     price: 5.5,
     category: "salgados",
     image:
-      "https://images.unsplash.com/photo-1484327973588-da31c9178822?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1608855238293-a8853e7f7c98?q=80&w=870&auto=format&fit=crop",
   },
   {
     id: "5",
