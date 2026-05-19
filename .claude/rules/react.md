@@ -9,7 +9,10 @@
 
 - **Prioridade Máxima:** Use os componentes da biblioteca shadcn/ui o máximo possível para construir a interface. Consulte https://ui.shadcn.com/.
 - **Verificação Prévia:** Antes de criar um novo componente do zero, **SEMPRE** use o _Context7_ (sua ferramenta de contexto) para verificar se já existe um componente correspondente no shadcn/ui. Se existir, instale-o e use-o.
+- **Instalação:** Instale componentes shadcn com `pnpm dlx shadcn@latest add <componente>`. Após instalar, verifique se todas as dependências peer foram adicionadas ao `package.json`; se faltar alguma (ex: `class-variance-authority`), instale manualmente com `pnpm add <dependência>`.
+- **Versão Atual:** O `button.tsx` gerado pelo shadcn mais recente **não usa** `React.forwardRef` (removido no React 19) e declara props com `type`, não `interface`. Se o arquivo gerado usar o padrão antigo, atualize-o para o padrão atual antes de usar.
 - **Botões:** **SEMPRE** use o componente `Button` do shadcn/ui (`@/components/ui/button`). **NUNCA** utilize a tag `<button>` nativa do HTML diretamente.
+- **Links estilizados como botão:** Use `<Button asChild>` com `<Link href="...">` interno. **NUNCA** estilize uma tag `<a>` ou `<Link>` manualmente como botão.
 - **Páginas e Layouts:** **SEMPRE** verifique os componentes base disponíveis em `@components/ui/page.tsx` para garantir a reutilização da estrutura de página.
 
 ## Estilização (Tailwind CSS)
