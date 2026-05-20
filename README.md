@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/logo.svg" alt="Logo Brivan Sabor" width="300" />
+  <img src="public/logo.png" alt="Logo Brivan Sabor" width="300" />
 
 # Brivan Sabor - E-commerce
 
@@ -49,15 +49,15 @@ O projeto foi construído do zero com uma estética **Luxury Design**: fundo esc
 
 ## 🛠️ Tecnologias Utilizadas
 
-| Tecnologia | Função |
-|---|---|
+| Tecnologia                  | Função                                                     |
+| --------------------------- | ---------------------------------------------------------- |
 | **Next.js 16 (App Router)** | Framework principal, roteamento e Server/Client Components |
-| **React 19** | Biblioteca de UI e gerenciamento de estado local |
-| **TypeScript (strict)** | Tipagem estática e segurança de código |
-| **Tailwind CSS v4** | Estilização utilitária com design system customizado |
-| **shadcn/ui** | Componentes de UI acessíveis e altamente customizáveis |
-| **Framer Motion** | Animações de entrada, saída e transições de página |
-| **pnpm** | Gerenciador de pacotes eficiente e rápido |
+| **React 19**                | Biblioteca de UI e gerenciamento de estado local           |
+| **TypeScript (strict)**     | Tipagem estática e segurança de código                     |
+| **Tailwind CSS v4**         | Estilização utilitária com design system customizado       |
+| **shadcn/ui**               | Componentes de UI acessíveis e altamente customizáveis     |
+| **Framer Motion**           | Animações de entrada, saída e transições de página         |
+| **pnpm**                    | Gerenciador de pacotes eficiente e rápido                  |
 
 ---
 
