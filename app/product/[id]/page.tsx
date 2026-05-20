@@ -96,7 +96,7 @@ export default function ProductPage() {
             )}
           </div>
         </div>
-        <div className="fixed bottom-0 left-0 right-0 p-6 mb-8 bg-brand-black/90 backdrop-blur-xl border-t border-brand-soft-black flex gap-4">
+        <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 bg-brand-black/90 backdrop-blur-xl border-t border-brand-soft-black flex gap-4">
           <div className="flex items-center justify-between bg-brand-soft-black rounded-xl px-4 h-14 w-1/3 border border-brand-soft-black">
             <Button
               variant="ghost"
