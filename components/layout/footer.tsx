@@ -1,27 +1,23 @@
+import { MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Phone } from "lucide-react";
 
 export const Footer = () => {
   return (
-    <footer className="bg-brand-black pt-16 pb-8 border-t border-brand-soft-black mt-auto">
+    <footer className="bg-brand-black pt-8 b-8 border-t border-brand-soft-black mt-auto">
       <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-1 mb-5">
           <div>
-            <Link href="/" className="flex items-center gap-2 mb-6">
-              <Image
-                src="/icon.png"
-                alt="Brivan Sabor Logo"
-                width={64}
-                height={64}
-                className="object-contain grayscale opacity-80"
-              />
-            </Link>
-            <p className="text-brand-off-white/60 font-light max-w-sm mb-8 text-sm leading-relaxed">
-              Sabores que transformam momentos em experiências inesquecíveis.
-              Alta gastronomia para sua casa ou evento.
-            </p>
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-center">
+              <Link href="/" className="flex items-center gap-2 mb-6">
+                <Image
+                  src="/icon.png"
+                  alt="Brivan Sabor Logo"
+                  width={64}
+                  height={64}
+                  className="object-contain grayscale opacity-80"
+                />
+              </Link>
               <a
                 href="#"
                 className="w-10 h-10 rounded-full border border-brand-soft-black flex items-center justify-center text-brand-gold hover:bg-brand-gold hover:text-brand-black transition-all"
@@ -59,9 +55,13 @@ export const Footer = () => {
                 </svg>
               </a>
             </div>
+            <p className="text-brand-off-white/60 font-light max-w-sm mb-8 text-sm leading-relaxed">
+              Sabores que transformam momentos em experiências inesquecíveis.
+              Alta gastronomia para sua casa ou evento.
+            </p>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-2">
             <h4 className="font-serif text-xl text-brand-gold">Contato</h4>
             <div className="space-y-4">
               <a

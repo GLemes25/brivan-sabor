@@ -1,11 +1,11 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { MOCK_PRODUCTS } from "@/lib/data";
+import { ArrowLeft, Heart, Minus, Plus, Share2 } from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { ArrowLeft, Heart, Minus, Plus, Share2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { MOCK_PRODUCTS } from "@/lib/data";
 
 export default function ProductPage() {
   const params = useParams();
@@ -45,7 +45,7 @@ export default function ProductPage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-brand-black via-transparent to-transparent" />
       </div>
 
       <div className="flex-1 px-6 py-6 -mt-10 relative z-10">
@@ -78,23 +78,26 @@ export default function ProductPage() {
           </h3>
 
           <div className="space-y-4">
-            {["Embalagem para Presente", "Cartão Personalizado"].map((addon, idx) => (
-              <label
-                key={idx}
-                className="flex items-center justify-between p-4 rounded-xl border border-brand-soft-black hover:border-brand-gold/50 cursor-pointer transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded border border-brand-gold/50 flex items-center justify-center" />
-                  <span className="text-brand-off-white text-sm">{addon}</span>
-                </div>
-                <span className="text-brand-gold text-sm">+ R$ 15,00</span>
-              </label>
-            ))}
+            {["Embalagem para Presente", "Cartão Personalizado"].map(
+              (addon, idx) => (
+                <label
+                  key={idx}
+                  className="flex items-center justify-between p-4 rounded-xl border border-brand-soft-black hover:border-brand-gold/50 cursor-pointer transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded border border-brand-gold/50 flex items-center justify-center" />
+                    <span className="text-brand-off-white text-sm">
+                      {addon}
+                    </span>
+                  </div>
+                  <span className="text-brand-gold text-sm">+ R$ 15,00</span>
+                </label>
+              ),
+            )}
           </div>
         </div>
-
-        <div className="fixed bottom-0 left-0 right-0 p-6 bg-brand-black/90 backdrop-blur-xl border-t border-brand-soft-black flex gap-4">
-          <div className="flex items-center justify-between bg-brand-soft-black rounded-xl px-4 py-3 w-1/3 border border-brand-soft-black">
+        <div className="fixed bottom-0 left-0 right-0 p-6 mb-8 bg-brand-black/90 backdrop-blur-xl border-t border-brand-soft-black flex gap-4">
+          <div className="flex items-center justify-between bg-brand-soft-black rounded-xl px-4 h-14 w-1/3 border border-brand-soft-black">
             <Button
               variant="ghost"
               size="icon"
@@ -103,7 +106,9 @@ export default function ProductPage() {
             >
               <Minus className="w-5 h-5" />
             </Button>
-            <span className="text-brand-off-white font-semibold">{quantity}</span>
+            <span className="text-brand-off-white font-semibold">
+              {quantity}
+            </span>
             <Button
               variant="ghost"
               size="icon"
@@ -114,7 +119,7 @@ export default function ProductPage() {
             </Button>
           </div>
 
-          <Button className="flex-1 bg-brand-gold text-brand-black font-semibold rounded-xl hover:bg-brand-warm-gold transition-colors">
+          <Button className="flex-1 h-14 bg-brand-gold text-brand-black font-semibold text-lg rounded-xl hover:bg-brand-warm-gold transition-colors">
             Adicionar • R${" "}
             {(product.price * quantity).toFixed(2).replace(".", ",")}
           </Button>

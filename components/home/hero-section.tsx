@@ -18,12 +18,12 @@ export function HeroSection() {
           sizes="100vw"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-black via-brand-black/90 md:via-brand-black/70 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-brand-black via-brand-black/90 md:via-brand-black/70 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-brand-black via-brand-black/20 to-transparent" />
       </div>
 
       <div className="container mx-auto relative z-10">
-        <div className="max-w-sm md:max-w-2xl mx-20 lg:max-w-3xl flex flex-col gap-6 md:gap-15">
+        <div className="max-w-sm md:max-w-2xl mx-5  lg:max-w-3xl flex flex-col gap-6 md:gap-15">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -52,7 +52,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-brand-off-white/80 text-sm md:text-base lg:text-lg leading-relaxed max-w-[280px] sm:max-w-sm md:max-w-lg"
+            className="text-brand-off-white/80 text-sm md:text-base lg:text-lg leading-relaxed max-w-70 sm:max-w-sm md:max-w-lg"
           >
             Salgados, doces, tábuas e buffet para tornar qualquer ocasião
             especial.
