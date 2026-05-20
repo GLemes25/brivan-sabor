@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export function HeroSection() {
   return (
-    <section className="relative w-full min-h-[90dvh] md:min-h-[70vh] lg:min-h-screen flex items-center pt-20 overflow-hidden">
+    <section className="relative w-full min-h-[50dvh] md:min-h-[70vh] lg:min-h-[85vh] flex flex-col md:flex-row md:items-center overflow-hidden">
       {/* Background Images & Gradients */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -19,50 +19,54 @@ export function HeroSection() {
           priority
         />
         <div className="absolute inset-0 bg-linear-to-r from-brand-black via-brand-black/90 md:via-brand-black/70 to-transparent" />
-        <div className="absolute inset-0 bg-linear-to-t from-brand-black via-brand-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-brand-black via-brand-black/40 to-transparent" />
       </div>
 
-      <div className="container mx-auto relative z-10">
-        <div className="max-w-sm md:max-w-2xl mx-5  lg:max-w-3xl flex flex-col gap-6 md:gap-15">
+      <div className="container mx-auto relative z-10 flex-1 flex flex-col">
+        <div className="max-w-sm md:max-w-2xl mx-5 lg:max-w-3xl flex-1 flex flex-col justify-between pt-15 lg:pb-10 md:py-6 md:min-h-[50vh]">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 "
+            className="flex items-center gap-3 p-1 mb-10 md:p-2"
           >
             <div className="w-8 md:w-14 h-px bg-brand-gold" />
-            <span className="text-brand-gold text-[10px] md:text-sm lg:text-base font-semibold tracking-wider uppercase">
+            <span className="text-brand-gold text-[10px] md:text-sm font-semibold tracking-wider uppercase">
               Da nossa cozinha para os seus momentos
             </span>
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif text-brand-off-white leading-[1.15]"
-          >
-            Sabores que <br className="md:hidden" />
-            transformam <br />
-            momentos em <br className="md:hidden" />
-            experiências <br />
-            <span className="text-brand-gold italic pr-2">inesquecíveis.</span>
-          </motion.h1>
+          <div className="flex-1 flex flex-col justify-center gap-4 my-auto">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-4xl sm:text-5xl md:text-6xl font-serif text-brand-off-white leading-[1.15] p-1 pt-7 md:p-2"
+            >
+              Sabores que <br className="md:hidden" />
+              transformam <br />
+              momentos em <br className="md:hidden" />
+              experiências <br />
+              <span className="text-brand-gold italic pr-2">
+                inesquecíveis.
+              </span>
+            </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-brand-off-white/80 text-sm md:text-base lg:text-lg leading-relaxed max-w-70 sm:max-w-sm md:max-w-lg"
-          >
-            Salgados, doces, tábuas e buffet para tornar qualquer ocasião
-            especial.
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-brand-off-white/80 text-sm md:text-base lg:text-lg leading-relaxed max-w-[290px] sm:max-w-sm md:max-w-lg p-1 md:p-2"
+            >
+              Salgados, doces, tábuas e buffet para tornar qualquer ocasião
+              especial.
+            </motion.p>
+          </div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex flex-row gap-3 md:gap-4 w-full sm:max-w-md pt-2"
+            className="flex flex-row gap-3 md:gap-4 w-full sm:max-w-md mt-10 p-1 pb-10 md:p-2"
           >
             <Link
               href="/category/all"
