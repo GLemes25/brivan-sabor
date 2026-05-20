@@ -4,8 +4,7 @@ import { ChevronRight, Menu, ShoppingBag, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const NAV_LINKS = [
   { label: "Início", href: "/" },
@@ -19,11 +18,6 @@ const NAV_LINKS = [
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const pathname = usePathname();
-
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [pathname]);
 
   return (
     <>
@@ -73,6 +67,7 @@ export const Navbar = () => {
                 <Link
                   key={link.href}
                   href={link.href}
+                  onClick={() => setIsMenuOpen(false)}
                   className="text-2xl font-serif text-brand-off-white hover:text-brand-gold transition-colors flex items-center justify-between group"
                 >
                   {link.label}
