@@ -55,7 +55,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-brand-off-white/80 text-sm md:text-base lg:text-lg leading-relaxed max-w-[290px] sm:max-w-sm md:max-w-lg p-1 md:p-2"
+              className="text-brand-off-white/80 text-sm md:text-base lg:text-lg leading-relaxed max-w-73 sm:max-w-sm md:max-w-lg p-1 md:p-2"
             >
               Salgados, doces, tábuas e buffet para tornar qualquer ocasião
               especial.
