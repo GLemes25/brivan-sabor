@@ -1,6 +1,6 @@
 import { FeaturedProducts } from "@/components/home/featured-products";
 import { HeroSection } from "@/components/home/hero-section";
-import { CATEGORIES, MOCK_PRODUCTS } from "@/lib/data";
+import { prisma } from "@/lib/prisma";
 import type { LucideIcon } from "lucide-react";
 import {
   Cake,
@@ -21,8 +21,27 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Truck,
 };
 
-const HomePage = () => {
-  const featuredProducts = MOCK_PRODUCTS.slice(0, 3);
+const HomePage = async () => {
+  const [categories, featuredProducts] = await Promise.all([
+    prisma.category.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: "asc" },
+    }),
+    prisma.product.findMany({
+      where: { isActive: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+      take: 3,
+    }),
+  ]);
+
+  const serializedFeaturedProducts = featuredProducts.map((product) => ({
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    price: product.price.toNumber(),
+    images: product.images,
+    flavors: product.flavors,
+  }));
 
   return (
     <div className="flex flex-col pb-10 md:pb-16">
@@ -46,12 +65,12 @@ const HomePage = () => {
           </div>
 
           <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar snap-x md:overflow-x-visible md:grid md:grid-cols-5 md:gap-6 md:pb-0 md:snap-none">
-            {CATEGORIES.map((category) => {
+            {categories.map((category) => {
               const Icon = ICON_MAP[category.icon] ?? Croissant;
               return (
                 <Link
                   key={category.id}
-                  href={`/category/${category.id}`}
+                  href={`/category/${category.slug}`}
                   className="snap-start shrink-0 flex flex-col items-center gap-3 group md:snap-none"
                 >
                   <div className="w-15 h-15 rounded-full bg-brand-category border border-brand-soft-black flex items-center justify-center text-brand-gold transition-colors md:w-20 md:h-20 md:group-hover:border-brand-gold md:group-hover:bg-brand-gold/10 md:group-hover:-translate-y-1 md:transition-all md:duration-300 ease-out">
@@ -83,7 +102,7 @@ const HomePage = () => {
               Ver Todas <ChevronRight className="w-3 h-3 md:w-4 md:h-4" />
             </Link>
           </div>
-          <FeaturedProducts products={featuredProducts} />
+          <FeaturedProducts products={serializedFeaturedProducts} />
         </div>
       </section>
 

@@ -3,10 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
-import type { Product } from "@/lib/data";
+import type { SerializedProduct } from "@/types/product";
 
 type FeaturedProductsProps = {
-  products: Product[];
+  products: SerializedProduct[];
 };
 
 export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
@@ -24,7 +24,7 @@ export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
           >
             <div className="relative h-30 md:h-48 lg:h-56 w-full overflow-hidden">
               <Image
-                src={product.image}
+                src={product.images[0]}
                 alt={product.name}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
