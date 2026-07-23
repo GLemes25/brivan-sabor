@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Menu, ShoppingBag, X } from "lucide-react";
+import { ChevronRight, Menu, ShoppingBag, User, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -34,6 +34,18 @@ export const Navbar = () => {
           </Link>
 
           <div className="flex items-center gap-6">
+            <Link
+              href="/login"
+              className="hidden sm:flex items-center gap-2 text-brand-off-white hover:text-brand-gold transition-colors"
+            >
+              <User className="w-5 h-5" />
+              <span className="text-xs font-semibold uppercase tracking-widest">
+                Entrar
+              </span>
+            </Link>
+            <Link href="/login" className="sm:hidden">
+              <User className="w-6 h-6 text-brand-off-white hover:text-brand-gold transition-colors" />
+            </Link>
             <Link href="/cart" className="relative group">
               <ShoppingBag className="w-6 h-6 text-brand-off-white group-hover:text-brand-gold transition-colors" />
               <span className="absolute -top-1 -right-2 w-4 h-4 bg-brand-gold text-brand-black text-[10px] font-bold rounded-full flex items-center justify-center">
