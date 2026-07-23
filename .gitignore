@@ -42,3 +42,5 @@ next-env.d.ts
 
 # tasks
 /tasks/
+
+/lib/generated/prisma
