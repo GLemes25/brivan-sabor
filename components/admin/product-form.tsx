@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
-import { createProduct } from "@/app/actions/product";
+import { createProduct, updateProduct } from "@/app/actions/product";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -38,29 +38,43 @@ type ProductCategoryOption = {
   name: string;
 };
 
+export type ProductFormInitialData = {
+  id: string;
+  name: string;
+  sku: string;
+  slug: string;
+  description: string;
+  price: string;
+  categoryId: string;
+  imageUrl: string;
+  isActive: boolean;
+};
+
 type ProductFormProps = {
   categories: ProductCategoryOption[];
+  initialData?: ProductFormInitialData;
 };
 
 const fieldClassName =
   "border-brand-separator/60 bg-brand-black/40 text-brand-off-white placeholder:text-brand-muted/50 focus-visible:border-brand-gold focus-visible:ring-brand-gold focus-visible:ring-offset-0";
 
-export const ProductForm = ({ categories }: ProductFormProps) => {
+export const ProductForm = ({ categories, initialData }: ProductFormProps) => {
   const router = useRouter();
-  const [isSlugEdited, setIsSlugEdited] = useState(false);
+  const isEditMode = Boolean(initialData);
+  const [isSlugEdited, setIsSlugEdited] = useState(isEditMode);
   const [serverError, setServerError] = useState<string | null>(null);
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
-      name: "",
-      sku: "",
-      slug: "",
-      description: "",
-      price: "",
-      categoryId: "",
-      imageUrl: "",
-      isActive: true,
+      name: initialData?.name ?? "",
+      sku: initialData?.sku ?? "",
+      slug: initialData?.slug ?? "",
+      description: initialData?.description ?? "",
+      price: initialData?.price ?? "",
+      categoryId: initialData?.categoryId ?? "",
+      imageUrl: initialData?.imageUrl ?? "",
+      isActive: initialData?.isActive ?? true,
     },
   });
 
@@ -77,7 +91,9 @@ export const ProductForm = ({ categories }: ProductFormProps) => {
   const onSubmit = async (values: ProductFormValues) => {
     setServerError(null);
 
-    const result = await createProduct(values);
+    const result = initialData
+      ? await updateProduct(initialData.id, values)
+      : await createProduct(values);
 
     if (!result.success) {
       setServerError(result.error);
@@ -292,6 +308,8 @@ export const ProductForm = ({ categories }: ProductFormProps) => {
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Salvando...
               </>
+            ) : isEditMode ? (
+              "Salvar Alterações"
             ) : (
               "Salvar Produto"
             )}

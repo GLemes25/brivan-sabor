@@ -1,6 +1,7 @@
 import { ImageOff } from "lucide-react";
 import Image from "next/image";
 
+import { ProductRowActions } from "@/components/admin/product-row-actions";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -54,6 +55,7 @@ export const ProductsTable = ({ products }: ProductsTableProps) => {
             <TableHead className="text-brand-muted">Preço</TableHead>
             <TableHead className="text-brand-muted">Estoque</TableHead>
             <TableHead className="text-brand-muted">Status</TableHead>
+            <TableHead className="text-right text-brand-muted">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -128,6 +130,12 @@ export const ProductsTable = ({ products }: ProductsTableProps) => {
                   >
                     {product.isActive ? "Ativo" : "Inativo"}
                   </Badge>
+                </TableCell>
+                <TableCell className="text-right">
+                  <ProductRowActions
+                    productId={product.id}
+                    productName={product.name}
+                  />
                 </TableCell>
               </TableRow>
             );
