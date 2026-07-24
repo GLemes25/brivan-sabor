@@ -1,40 +1,25 @@
 "use client";
 
+import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import type { SerializedProduct } from "@/types/product";
+import { useCartStore } from "@/lib/store/cart-store";
 
-type CartItem = {
-  product: SerializedProduct;
-  quantity: number;
-};
+const DELIVERY_FEE = 5.0;
 
-type CartViewProps = {
-  initialItems: CartItem[];
-};
-
-export const CartView = ({ initialItems }: CartViewProps) => {
-  const [items, setItems] = useState<CartItem[]>(initialItems);
-
-  const updateQuantity = (idx: number, delta: number) => {
-    const newItems = [...items];
-    newItems[idx].quantity = Math.max(1, newItems[idx].quantity + delta);
-    setItems(newItems);
-  };
-
-  const removeItem = (idx: number) => {
-    setItems(items.filter((_, i) => i !== idx));
-  };
+export const CartView = () => {
+  const items = useCartStore((state) => state.items);
+  const removeItem = useCartStore((state) => state.removeItem);
+  const updateItemQuantity = useCartStore((state) => state.updateItemQuantity);
 
   const subtotal = items.reduce(
-    (acc, item) => acc + item.product.price * item.quantity,
-    0,
+    (acc, item) =>
+      acc + item.unitPrice * item.quantity + item.addonsTotal * item.quantity,
+    0
   );
-  const deliveryFee = 15.0;
-  const total = subtotal + deliveryFee;
+  const total = items.length > 0 ? subtotal + DELIVERY_FEE : 0;
 
   return (
     <div className="flex flex-col bg-brand-black min-h-[calc(100vh-80px)] px-6 py-8">
@@ -58,22 +43,25 @@ export const CartView = ({ initialItems }: CartViewProps) => {
           <p className="text-brand-off-white/60 font-serif text-lg">
             Seu carrinho está vazio.
           </p>
-          <Button asChild className="bg-brand-gold text-brand-black px-8 py-3 rounded-xl font-semibold hover:bg-brand-warm-gold">
+          <Button
+            asChild
+            className="bg-brand-gold text-brand-black px-8 py-3 rounded-xl font-semibold hover:bg-brand-warm-gold"
+          >
             <Link href="/category/all">Ver Cardápio</Link>
           </Button>
         </div>
       ) : (
         <div className="flex-1 flex flex-col lg:flex-row gap-12">
           <div className="flex-1 space-y-6">
-            {items.map((item, idx) => (
+            {items.map((item) => (
               <div
-                key={idx}
+                key={`${item.productId}-${item.flavor ?? "default"}`}
                 className="flex gap-4 bg-brand-card p-4 rounded-2xl border border-transparent hover:border-brand-soft-black transition-all"
               >
                 <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0">
                   <Image
-                    src={item.product.images[0]}
-                    alt={item.product.name}
+                    src={item.productImage}
+                    alt={item.productName}
                     fill
                     className="object-cover"
                   />
@@ -83,16 +71,21 @@ export const CartView = ({ initialItems }: CartViewProps) => {
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="font-serif text-brand-off-white font-semibold text-sm mb-1">
-                        {item.product.name}
+                        {item.productName}
                       </h3>
+                      {item.flavor && (
+                        <p className="text-brand-muted text-xs mb-1">
+                          Sabor: {item.flavor}
+                        </p>
+                      )}
                       <p className="text-brand-gold font-medium text-xs">
-                        R$ {item.product.price.toFixed(2).replace(".", ",")}
+                        R$ {item.unitPrice.toFixed(2).replace(".", ",")}
                       </p>
                     </div>
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => removeItem(idx)}
+                      onClick={() => removeItem(item.productId, item.flavor)}
                       className="text-brand-muted hover:text-destructive hover:bg-transparent"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -104,7 +97,13 @@ export const CartView = ({ initialItems }: CartViewProps) => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => updateQuantity(idx, -1)}
+                        onClick={() =>
+                          updateItemQuantity(
+                            item.productId,
+                            item.quantity - 1,
+                            item.flavor
+                          )
+                        }
                         className="text-brand-gold hover:text-brand-warm-gold hover:bg-transparent w-6 h-6"
                       >
                         <Minus className="w-4 h-4" />
@@ -115,7 +114,13 @@ export const CartView = ({ initialItems }: CartViewProps) => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => updateQuantity(idx, 1)}
+                        onClick={() =>
+                          updateItemQuantity(
+                            item.productId,
+                            item.quantity + 1,
+                            item.flavor
+                          )
+                        }
                         className="text-brand-gold hover:text-brand-warm-gold hover:bg-transparent w-6 h-6"
                       >
                         <Plus className="w-4 h-4" />
@@ -124,7 +129,10 @@ export const CartView = ({ initialItems }: CartViewProps) => {
 
                     <span className="text-brand-off-white font-semibold text-sm">
                       R${" "}
-                      {(item.product.price * item.quantity)
+                      {(
+                        (item.unitPrice + item.addonsTotal) *
+                        item.quantity
+                      )
                         .toFixed(2)
                         .replace(".", ",")}
                     </span>
@@ -149,7 +157,7 @@ export const CartView = ({ initialItems }: CartViewProps) => {
               <div className="flex justify-between text-sm">
                 <span className="text-brand-off-white/70">Taxa de Entrega</span>
                 <span className="text-brand-off-white">
-                  R$ {deliveryFee.toFixed(2).replace(".", ",")}
+                  R$ {DELIVERY_FEE.toFixed(2).replace(".", ",")}
                 </span>
               </div>
             </div>
@@ -167,7 +175,7 @@ export const CartView = ({ initialItems }: CartViewProps) => {
               asChild
               className="w-full bg-brand-gold text-brand-black font-semibold rounded-xl py-4 uppercase tracking-widest hover:bg-brand-warm-gold transition-colors"
             >
-              <Link href="/checkout">Finalizar Pedido</Link>
+              <Link href="/checkout">Ir para o Pagamento</Link>
             </Button>
           </div>
         </div>

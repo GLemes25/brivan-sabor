@@ -1,11 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import type { SerializedProduct } from "@/types/product";
 import { ArrowLeft, Heart, Minus, Plus, Share2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { useCartStore } from "@/lib/store/cart-store";
+import type { SerializedProduct } from "@/types/product";
 
 type ProductDetailsProps = {
   product: SerializedProduct;
@@ -13,6 +15,7 @@ type ProductDetailsProps = {
 
 export const ProductDetails = ({ product }: ProductDetailsProps) => {
   const router = useRouter();
+  const addItem = useCartStore((state) => state.addItem);
 
   const [quantity, setQuantity] = useState(1);
   const [isLiked, setIsLiked] = useState(false);
@@ -20,6 +23,21 @@ export const ProductDetails = ({ product }: ProductDetailsProps) => {
 
   const totalPrice = (product.price * quantity).toFixed(2).replace(".", ",");
   const formattedPrice = product.price.toFixed(2).replace(".", ",");
+
+  const handleAddToCart = () => {
+    addItem({
+      productId: product.id,
+      productName: product.name,
+      productImage: product.images[0] ?? "",
+      unitPrice: product.price,
+      quantity,
+      flavor: selectedFlavor ?? undefined,
+      addons: [],
+      addonsTotal: 0,
+    });
+
+    router.push("/cart");
+  };
 
   return (
     <div className="flex flex-col bg-brand-black min-h-[calc(100vh-80px)]">
@@ -152,7 +170,10 @@ export const ProductDetails = ({ product }: ProductDetailsProps) => {
                 <Plus className="w-5 h-5" />
               </Button>
             </div>
-            <Button className="h-14 px-8 bg-brand-gold text-brand-black font-semibold text-base rounded-xl hover:bg-brand-warm-gold transition-all duration-300 md:hover:-translate-y-1">
+            <Button
+              onClick={handleAddToCart}
+              className="h-14 px-8 bg-brand-gold text-brand-black font-semibold text-base rounded-xl hover:bg-brand-warm-gold transition-all duration-300 md:hover:-translate-y-1"
+            >
               Adicionar • R$ {totalPrice}
             </Button>
           </div>
@@ -179,7 +200,10 @@ export const ProductDetails = ({ product }: ProductDetailsProps) => {
             <Plus className="w-5 h-5" />
           </Button>
         </div>
-        <Button className="flex-1 h-14 bg-brand-gold text-brand-black font-semibold text-lg rounded-xl hover:bg-brand-warm-gold transition-colors">
+        <Button
+          onClick={handleAddToCart}
+          className="flex-1 h-14 bg-brand-gold text-brand-black font-semibold text-lg rounded-xl hover:bg-brand-warm-gold transition-colors"
+        >
           Adicionar • R$ {totalPrice}
         </Button>
       </div>
