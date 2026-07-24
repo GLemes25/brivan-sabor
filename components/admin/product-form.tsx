@@ -1,7 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { ImageOff, Loader2 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -63,6 +64,9 @@ export const ProductForm = ({ categories, initialData }: ProductFormProps) => {
   const isEditMode = Boolean(initialData);
   const [isSlugEdited, setIsSlugEdited] = useState(isEditMode);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    initialData?.imageUrl || null
+  );
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
@@ -73,7 +77,7 @@ export const ProductForm = ({ categories, initialData }: ProductFormProps) => {
       description: initialData?.description ?? "",
       price: initialData?.price ?? "",
       categoryId: initialData?.categoryId ?? "",
-      imageUrl: initialData?.imageUrl ?? "",
+      image: initialData?.imageUrl || undefined,
       isActive: initialData?.isActive ?? true,
     },
   });
@@ -91,9 +95,24 @@ export const ProductForm = ({ categories, initialData }: ProductFormProps) => {
   const onSubmit = async (values: ProductFormValues) => {
     setServerError(null);
 
+    const formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("sku", values.sku);
+    formData.append("slug", values.slug);
+    formData.append("description", values.description ?? "");
+    formData.append("price", values.price);
+    formData.append("categoryId", values.categoryId);
+    formData.append("isActive", String(values.isActive));
+
+    if (values.image instanceof File) {
+      formData.append("image", values.image);
+    } else if (typeof values.image === "string") {
+      formData.append("existingImageUrl", values.image);
+    }
+
     const result = initialData
-      ? await updateProduct(initialData.id, values)
-      : await createProduct(values);
+      ? await updateProduct(initialData.id, formData)
+      : await createProduct(formData);
 
     if (!result.success) {
       setServerError(result.error);
@@ -246,22 +265,57 @@ export const ProductForm = ({ categories, initialData }: ProductFormProps) => {
 
           <FormField
             control={form.control}
-            name="imageUrl"
+            name="image"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-xs uppercase tracking-widest text-brand-muted">
-                  URL da Imagem
+                  Imagem do Produto
                 </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="https://..."
-                    className={fieldClassName}
-                    {...field}
-                  />
-                </FormControl>
+                <div className="flex items-center gap-4">
+                  <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-brand-separator/50 bg-brand-black/40">
+                    {previewUrl ? (
+                      <Image
+                        src={previewUrl}
+                        alt="Pré-visualização da imagem do produto"
+                        fill
+                        unoptimized
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-brand-muted">
+                        <ImageOff className="h-6 w-6" />
+                      </div>
+                    )}
+                  </div>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      name={field.name}
+                      ref={field.ref}
+                      onBlur={field.onBlur}
+                      className={fieldClassName}
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+
+                        if (!file) {
+                          return;
+                        }
+
+                        field.onChange(file);
+                        setPreviewUrl((current) => {
+                          if (current?.startsWith("blob:")) {
+                            URL.revokeObjectURL(current);
+                          }
+
+                          return URL.createObjectURL(file);
+                        });
+                      }}
+                    />
+                  </FormControl>
+                </div>
                 <FormDescription className="text-brand-muted/70">
-                  Cole a URL de uma imagem já hospedada. O upload direto será
-                  adicionado futuramente.
+                  Formatos aceitos: JPG, PNG ou WEBP. Tamanho máximo de 5MB.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
