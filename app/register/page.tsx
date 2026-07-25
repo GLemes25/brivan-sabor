@@ -4,7 +4,7 @@ import Link from "next/link";
 import { RegisterForm } from "@/components/auth/register-form";
 
 export const metadata: Metadata = {
-  title: "Cadastre-se | Brivan Sabor",
+  title: "Cadastre-se",
   description: "Crie sua conta para acompanhar seus pedidos na Brivan Sabor.",
 };
 

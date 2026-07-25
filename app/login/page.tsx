@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { LoginForm } from "@/components/auth/login-form";
 
 export const metadata: Metadata = {
-  title: "Entrar | Brivan Sabor",
+  title: "Entrar",
   description: "Acesse sua conta para finalizar seu pedido na Brivan Sabor.",
 };
 

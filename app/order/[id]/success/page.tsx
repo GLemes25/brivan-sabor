@@ -9,7 +9,7 @@ import { siteConfig } from "@/lib/config/site";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: `Pedido Confirmado | ${siteConfig.name}`,
+  title: "Pedido Confirmado",
 };
 
 type OrderSuccessPageProps = {
