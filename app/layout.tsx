@@ -16,8 +16,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Brivan Sabor",
-  description: "Da nossa cozinha para os seus momentos.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
+  ),
+  title: {
+    template: "%s | Brivan Sabor",
+    default: "Brivan Sabor | Experiência Gastronômica",
+  },
+  description:
+    "O melhor delivery de salgados artesanais e doces de Campo Grande, MS.",
+  openGraph: {
+    title: "Brivan Sabor | Experiência Gastronômica",
+    description:
+      "O melhor delivery de salgados artesanais e doces de Campo Grande, MS.",
+    siteName: "Brivan Sabor",
+    locale: "pt_BR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
