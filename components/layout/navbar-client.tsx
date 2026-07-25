@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/lib/config/site";
 
 const NAV_LINKS = [
   { label: "Início", href: "/" },
@@ -33,7 +34,7 @@ export const NavbarClient = ({ isAuthenticated }: NavbarClientProps) => {
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/logo.png"
-              alt="Brivan Sabor Logo"
+              alt={`${siteConfig.name} Logo`}
               width={200}
               height={200}
               className="object-contain"

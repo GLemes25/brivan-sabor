@@ -2,6 +2,8 @@ import { MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { siteConfig } from "@/lib/config/site";
+
 export const Footer = () => {
   return (
     <footer className="bg-brand-black pt-10 pb-8 md:pt-16 border-t border-brand-soft-black mt-auto">
@@ -13,7 +15,7 @@ export const Footer = () => {
             <Link href="/" className="flex items-center group">
               <Image
                 src="/icon.png"
-                alt="Brivan Sabor Logo"
+                alt={`${siteConfig.name} Logo`}
                 width={80}
                 height={80}
                 className="object-contain grayscale opacity-80 md:group-hover:opacity-100 md:transition-opacity md:duration-300 w-16 h-16 md:w-20 md:h-20"
@@ -48,11 +50,13 @@ export const Footer = () => {
               <span className="whitespace-nowrap">@brivansabor</span>
             </a>
             <a
-              href="tel:+5511999999999"
+              href={`tel:+${siteConfig.contact.whatsapp}`}
               className="flex items-center gap-3 text-brand-off-white/70 md:hover:text-brand-gold text-xs md:text-base group md:hover:-translate-y-1 transition-all duration-300"
             >
               <Phone className="w-4 h-4 md:w-6 md:h-6 shrink-0 md:group-hover:text-brand-gold transition-colors" />
-              <span className="whitespace-nowrap">(11) 99999-9999</span>
+              <span className="whitespace-nowrap">
+                {siteConfig.contact.displayPhone}
+              </span>
             </a>
             <div className="flex items-start gap-3 text-brand-off-white/70 text-xs md:text-base group md:hover:-translate-y-1 transition-all duration-300 cursor-default">
               <MapPin className="w-4 h-4 md:w-6 md:h-6 shrink-0 mt-0.5 md:group-hover:text-brand-gold transition-colors" />
@@ -69,7 +73,7 @@ export const Footer = () => {
 
         <div className="border-t border-brand-soft-black pt-8 flex flex-col md:flex-row justify-between items-center gap-5 text-[10px] md:text-sm text-brand-off-white/40">
           <p className="text-center md:text-left">
-            © {new Date().getFullYear()} Brivan Sabor. Todos os direitos
+            © {new Date().getFullYear()} {siteConfig.name}. Todos os direitos
             reservados.
           </p>
           <div className="flex gap-6">
