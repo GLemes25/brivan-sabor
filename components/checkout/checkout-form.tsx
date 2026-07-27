@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 
 import { createOrder } from "@/app/actions/checkout";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ import {
   PAYMENT_METHOD_OPTIONS,
   type CheckoutFormValues,
 } from "@/lib/validations/checkout";
+import { fetchAddressByCep, sanitizeCep } from "@/lib/viacep";
 
 const DELIVERY_FEE = 5.0;
 
@@ -42,6 +43,7 @@ export const CheckoutForm = () => {
   const items = useCartStore((state) => state.items);
   const clearCart = useCartStore((state) => state.clearCart);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [isLoadingCep, setIsLoadingCep] = useState(false);
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
@@ -58,6 +60,44 @@ export const CheckoutForm = () => {
   });
 
   const isSubmitting = form.formState.isSubmitting;
+  const zipCode = useWatch({ control: form.control, name: "zipCode" });
+
+  useEffect(() => {
+    const sanitizedCep = sanitizeCep(zipCode);
+
+    if (sanitizedCep.length !== 8) {
+      return;
+    }
+
+    let isCancelled = false;
+
+    const lookupAddress = async () => {
+      setIsLoadingCep(true);
+
+      const address = await fetchAddressByCep(sanitizedCep);
+
+      if (isCancelled) {
+        return;
+      }
+
+      if (address) {
+        form.setValue("street", address.logradouro, { shouldValidate: true });
+        form.setValue("neighborhood", address.bairro, {
+          shouldValidate: true,
+        });
+        form.setValue("city", address.localidade, { shouldValidate: true });
+        form.setValue("state", address.uf, { shouldValidate: true });
+      }
+
+      setIsLoadingCep(false);
+    };
+
+    lookupAddress();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [zipCode, form]);
 
   const subtotal = items.reduce(
     (acc, item) =>
@@ -122,13 +162,20 @@ export const CheckoutForm = () => {
                 name="zipCode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs uppercase tracking-widest text-brand-off-white/60">
+                    <FormLabel className="text-xs uppercase tracking-widest text-brand-off-white/60 flex items-center gap-2">
                       CEP
+                      {isLoadingCep && (
+                        <span className="flex items-center gap-1 text-brand-gold normal-case tracking-normal">
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          Buscando endereço...
+                        </span>
+                      )}
                     </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="00000-000"
                         className={fieldClassName}
+                        disabled={isLoadingCep}
                         {...field}
                       />
                     </FormControl>
