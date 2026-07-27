@@ -4,5 +4,10 @@ import { NavbarClient } from "@/components/layout/navbar-client";
 export const Navbar = async () => {
   const session = await auth();
 
-  return <NavbarClient isAuthenticated={!!session?.user} />;
+  return (
+    <NavbarClient
+      isAuthenticated={!!session?.user}
+      isAdmin={session?.user?.role === "ADMIN"}
+    />
+  );
 };

@@ -1,12 +1,13 @@
 "use client";
 
-import { ChevronRight, Menu, ShoppingBag, User, X } from "lucide-react";
+import { ChevronRight, Menu, User, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
+import { CartIcon } from "@/components/cart/cart-icon";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/config/site";
 
@@ -22,9 +23,10 @@ const NAV_LINKS = [
 
 type NavbarClientProps = {
   isAuthenticated: boolean;
+  isAdmin: boolean;
 };
 
-export const NavbarClient = ({ isAuthenticated }: NavbarClientProps) => {
+export const NavbarClient = ({ isAuthenticated, isAdmin }: NavbarClientProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -44,6 +46,14 @@ export const NavbarClient = ({ isAuthenticated }: NavbarClientProps) => {
           <div className="flex items-center gap-6">
             {isAuthenticated ? (
               <div className="hidden sm:flex items-center gap-4">
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="text-[11px] font-bold uppercase tracking-widest text-brand-gold border border-brand-gold/50 hover:border-brand-gold px-3 py-1.5 rounded-sm transition-all"
+                  >
+                    Admin
+                  </Link>
+                )}
                 <Link
                   href="/orders"
                   className="flex items-center gap-2 text-brand-off-white hover:text-brand-gold transition-colors"
@@ -78,15 +88,15 @@ export const NavbarClient = ({ isAuthenticated }: NavbarClientProps) => {
             >
               <User className="w-6 h-6 text-brand-off-white hover:text-brand-gold transition-colors" />
             </Link>
-            <Link href="/cart" className="relative group">
-              <ShoppingBag className="w-6 h-6 text-brand-off-white group-hover:text-brand-gold transition-colors" />
-              <span className="absolute -top-1 -right-2 w-4 h-4 bg-brand-gold text-brand-black text-[10px] font-bold rounded-full flex items-center justify-center">
-                1
-              </span>
-            </Link>
-            <button className="p-1" onClick={() => setIsMenuOpen(true)}>
-              <Menu className="w-7 h-7 text-brand-off-white" />
-            </button>
+            <CartIcon />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMenuOpen(true)}
+              className="text-brand-off-white hover:bg-transparent hover:text-brand-gold"
+            >
+              <Menu className="w-7 h-7" />
+            </Button>
           </div>
         </div>
       </header>
@@ -101,9 +111,14 @@ export const NavbarClient = ({ isAuthenticated }: NavbarClientProps) => {
           >
             <div className="container mx-auto px-4 h-20 flex items-center justify-between border-b border-brand-soft-black">
               <span className="font-serif text-2xl text-brand-gold">Menu</span>
-              <button onClick={() => setIsMenuOpen(false)} className="p-2">
-                <X className="w-8 h-8 text-brand-off-white" />
-              </button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-brand-off-white hover:bg-transparent hover:text-brand-gold"
+              >
+                <X className="w-8 h-8" />
+              </Button>
             </div>
 
             <div className="flex-1 overflow-y-auto px-6 py-8 flex flex-col gap-6">
@@ -129,6 +144,15 @@ export const NavbarClient = ({ isAuthenticated }: NavbarClientProps) => {
                     >
                       Meus Pedidos
                     </Link>
+                    {isAdmin && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="text-2xl font-serif text-brand-gold transition-colors"
+                      >
+                        Painel Admin
+                      </Link>
+                    )}
                     <Button
                       variant="ghost"
                       onClick={() => {
