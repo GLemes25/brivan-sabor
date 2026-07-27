@@ -6,25 +6,9 @@ import { SearchBar } from "@/components/storefront/search-bar";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/lib/generated/prisma/client";
-import type { LucideIcon } from "lucide-react";
-import {
-  Cake,
-  ChevronRight,
-  Croissant,
-  Grape,
-  MessageCircle,
-  Truck,
-  UtensilsCrossed,
-} from "lucide-react";
+import { getCategoryIcon } from "@/lib/category-icons";
+import { ChevronRight, MessageCircle, Truck } from "lucide-react";
 import Link from "next/link";
-
-const ICON_MAP: Record<string, LucideIcon> = {
-  Croissant,
-  Cake,
-  Grape,
-  UtensilsCrossed,
-  Truck,
-};
 
 type HomePageProps = {
   searchParams: Promise<{ q?: string; category?: string }>;
@@ -96,7 +80,7 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
 
           <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar snap-x md:overflow-x-visible md:grid md:grid-cols-5 md:gap-6 md:pb-0 md:snap-none">
             {categories.map((categoryItem) => {
-              const Icon = ICON_MAP[categoryItem.icon] ?? Croissant;
+              const Icon = getCategoryIcon(categoryItem.icon);
               return (
                 <Link
                   key={categoryItem.id}

@@ -54,3 +54,11 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+[data-sonner-toaster] {
+  top: 50% !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translate(-50%, -50%) !important;
+}

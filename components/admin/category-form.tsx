@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { slugify } from "@/lib/utils";
+import { generateSlug } from "@/lib/utils";
 import {
   categoryFormSchema,
   type CategoryFormValues,
@@ -62,7 +62,7 @@ export const CategoryForm = ({ initialData }: CategoryFormProps) => {
 
   useEffect(() => {
     if (!isSlugEdited) {
-      form.setValue("slug", slugify(nameValue), { shouldValidate: false });
+      form.setValue("slug", generateSlug(nameValue), { shouldValidate: false });
     }
   }, [nameValue, isSlugEdited, form]);
 

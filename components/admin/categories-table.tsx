@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getCategoryIcon } from "@/lib/category-icons";
 
 export type CategoryRow = {
   id: string;
@@ -45,45 +46,48 @@ export const CategoriesTable = ({ categories }: CategoriesTableProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {categories.map((category) => (
-            <TableRow
-              key={category.id}
-              className="border-brand-separator/40 hover:bg-brand-black/30"
-            >
-              <TableCell>
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-brand-separator/50 bg-brand-black/40 text-xl text-brand-off-white">
-                  {category.icon}
-                </div>
-              </TableCell>
-              <TableCell className="font-medium text-brand-off-white">
-                {category.name}
-              </TableCell>
-              <TableCell className="font-mono text-xs text-brand-muted">
-                {category.slug}
-              </TableCell>
-              <TableCell className="text-brand-off-white">
-                {category.sortOrder}
-              </TableCell>
-              <TableCell>
-                <Badge
-                  variant="outline"
-                  className={
-                    category.isActive
-                      ? "border-transparent bg-emerald-500/10 text-emerald-400"
-                      : "border-transparent bg-red-500/10 text-red-400"
-                  }
-                >
-                  {category.isActive ? "Ativo" : "Inativo"}
-                </Badge>
-              </TableCell>
-              <TableCell className="text-right">
-                <CategoryRowActions
-                  categoryId={category.id}
-                  categoryName={category.name}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
+          {categories.map((category) => {
+            const Icon = getCategoryIcon(category.icon);
+            return (
+              <TableRow
+                key={category.id}
+                className="border-brand-separator/40 hover:bg-brand-black/30"
+              >
+                <TableCell>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-brand-separator/50 bg-brand-black/40 text-brand-off-white">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                </TableCell>
+                <TableCell className="font-medium text-brand-off-white">
+                  {category.name}
+                </TableCell>
+                <TableCell className="font-mono text-xs text-brand-muted">
+                  {category.slug}
+                </TableCell>
+                <TableCell className="text-brand-off-white">
+                  {category.sortOrder}
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant="outline"
+                    className={
+                      category.isActive
+                        ? "border-transparent bg-emerald-500/10 text-emerald-400"
+                        : "border-transparent bg-red-500/10 text-red-400"
+                    }
+                  >
+                    {category.isActive ? "Ativo" : "Inativo"}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-right">
+                  <CategoryRowActions
+                    categoryId={category.id}
+                    categoryName={category.name}
+                  />
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </div>

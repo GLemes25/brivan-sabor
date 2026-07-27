@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 import { WhatsAppButton } from "@/components/layout/whatsapp-button";
 import { CartHydration } from "@/components/providers/cart-hydration";
+import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/lib/config/site";
 
 const geistSans = Geist({
@@ -51,6 +52,7 @@ export default function RootLayout({
         <main className="flex-1 flex flex-col">{children}</main>
         <Footer />
         <WhatsAppButton />
+        <Toaster />
       </body>
     </html>
   );
