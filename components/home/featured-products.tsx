@@ -1,8 +1,7 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
+import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import type { SerializedProduct } from "@/types/product";
 
 type FeaturedProductsProps = {
@@ -44,14 +43,11 @@ export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
                 <span className="text-brand-gold font-semibold text-[10px] md:text-sm">
                   R$ {product.price.toFixed(2).replace(".", ",")}
                 </span>
-                <button
-                  className="w-6 h-6 md:w-8 md:h-8 rounded-lg bg-brand-gold flex items-center justify-center text-brand-black hover:bg-brand-warm-gold transition-colors"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  <span className="text-lg font-medium leading-none mb-0.5">
-                    +
-                  </span>
-                </button>
+                <AddToCartButton
+                  product={product}
+                  className="w-6 h-6 md:w-8 md:h-8 rounded-lg bg-brand-gold text-brand-black hover:bg-brand-warm-gold"
+                  iconClassName="text-lg font-medium leading-none mb-0.5"
+                />
               </div>
             </div>
           </Link>
