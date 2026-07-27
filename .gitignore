@@ -46,4 +46,7 @@ next-env.d.ts
 # tasks
 /tasks/
 
+# claude
+.claude/settings.json
+
 /lib/generated/prisma
