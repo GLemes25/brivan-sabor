@@ -1,21 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Suspense } from "react";
 
-import { LoginForm } from "@/components/auth/login-form";
+import { RegisterForm } from "@/components/auth/register-form";
 
 export const metadata: Metadata = {
-  title: "Entrar",
-  description: "Acesse sua conta para finalizar seu pedido na Brivan Sabor.",
+  title: "Cadastre-se",
+  description: "Crie sua conta para acompanhar seus pedidos na Brivan Sabor.",
 };
 
-const LoginPage = () => {
+const RegisterPage = () => {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-brand-black px-6 py-12">
       <div className="w-full max-w-sm flex flex-col items-center">
-        <Suspense fallback={null}>
-          <LoginForm />
-        </Suspense>
+        <RegisterForm />
 
         <Link
           href="/"
@@ -28,4 +25,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

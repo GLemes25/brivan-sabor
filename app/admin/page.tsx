@@ -3,14 +3,50 @@ import { DollarSign, ShoppingCart, Users, UtensilsCrossed } from "lucide-react";
 
 import { auth } from "@/auth";
 import { AdminSummaryCard } from "@/components/admin/admin-summary-card";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Dashboard | Brivan Sabor",
 };
 
+const currencyFormatter = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+});
+
 const AdminDashboardPage = async () => {
   const session = await auth();
   const adminName = session?.user?.name ?? "Administrador";
+
+  const now = new Date();
+  const startOfDay = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+  const endOfDay = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() + 1
+  );
+
+  const [pendingOrdersCount, dailyRevenue, activeProductsCount, registeredCustomersCount] =
+    await Promise.all([
+      prisma.order.count({
+        where: { status: { in: ["PENDING", "PREPARING"] } },
+      }),
+      prisma.order.aggregate({
+        _sum: { totalAmount: true },
+        where: {
+          createdAt: { gte: startOfDay, lt: endOfDay },
+          status: { not: "CANCELLED" },
+        },
+      }),
+      prisma.product.count({ where: { isActive: true } }),
+      prisma.user.count({ where: { role: "USER" } }),
+    ]);
+
+  const dailyRevenueAmount = Number(dailyRevenue._sum.totalAmount ?? 0);
 
   return (
     <div className="flex flex-col gap-8">
@@ -26,22 +62,22 @@ const AdminDashboardPage = async () => {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <AdminSummaryCard
           label="Pedidos Pendentes"
-          value="0"
+          value={String(pendingOrdersCount)}
           icon={ShoppingCart}
         />
         <AdminSummaryCard
           label="Faturamento do Dia"
-          value="R$ 0,00"
+          value={currencyFormatter.format(dailyRevenueAmount)}
           icon={DollarSign}
         />
         <AdminSummaryCard
           label="Produtos Ativos"
-          value="0"
+          value={String(activeProductsCount)}
           icon={UtensilsCrossed}
         />
         <AdminSummaryCard
           label="Clientes Registrados"
-          value="0"
+          value={String(registeredCustomersCount)}
           icon={Users}
         />
       </div>

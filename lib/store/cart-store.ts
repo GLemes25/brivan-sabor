@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import { calculateCartTotal } from "@/lib/cart-utils";
+
 export type CartItem = {
   productId: string;
   productName: string;
@@ -86,10 +88,11 @@ export const useCartStore = create<CartState>()(
       },
 
       cartSubtotal: () => {
-        return get().items.reduce(
-          (acc, item) =>
-            acc + item.unitPrice * item.quantity + item.addonsTotal * item.quantity,
-          0
+        return calculateCartTotal(
+          get().items.map((item) => ({
+            price: item.unitPrice + item.addonsTotal,
+            quantity: item.quantity,
+          }))
         );
       },
 

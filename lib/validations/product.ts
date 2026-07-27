@@ -1,5 +1,22 @@
 import * as z from "zod";
 
+const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+const imageFileSchema = z
+  .instanceof(File, { message: "Selecione um arquivo de imagem" })
+  .refine((file) => file.size <= MAX_IMAGE_SIZE_BYTES, {
+    message: "A imagem deve ter no máximo 5MB",
+  })
+  .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
+    message: "Formato inválido. Use JPG, PNG ou WEBP",
+  });
+
+const imageUrlSchema = z.string().refine(
+  (value) => value.startsWith("/") || /^https?:\/\//.test(value),
+  { message: "Informe uma URL ou caminho de imagem válido" }
+);
+
 export const productFormSchema = z.object({
   name: z.string().min(2, { message: "Informe o nome do produto" }),
   sku: z.string().min(1, { message: "Informe o SKU" }),
@@ -17,12 +34,7 @@ export const productFormSchema = z.object({
       message: "Informe um preço válido",
     }),
   categoryId: z.string().min(1, { message: "Selecione uma categoria" }),
-  imageUrl: z
-    .string()
-    .trim()
-    .url({ message: "Informe uma URL válida" })
-    .optional()
-    .or(z.literal("")),
+  image: z.union([imageFileSchema, imageUrlSchema]).optional(),
   isActive: z.boolean(),
 });
 

@@ -3,7 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
+import { WhatsAppButton } from "@/components/layout/whatsapp-button";
 import { CartHydration } from "@/components/providers/cart-hydration";
+import { siteConfig } from "@/lib/config/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,8 +18,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Brivan Sabor",
-  description: "Da nossa cozinha para os seus momentos.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
+  ),
+  title: {
+    template: `%s | ${siteConfig.name}`,
+    default: `${siteConfig.name} | Experiência Gastronômica`,
+  },
+  description: siteConfig.description,
+  openGraph: {
+    title: `${siteConfig.name} | Experiência Gastronômica`,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+    locale: "pt_BR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -35,6 +50,7 @@ export default function RootLayout({
         <Navbar />
         <main className="flex-1 flex flex-col">{children}</main>
         <Footer />
+        <WhatsAppButton />
       </body>
     </html>
   );
