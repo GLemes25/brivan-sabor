@@ -12,30 +12,40 @@ const imageFileSchema = z
     message: "Formato inválido. Use JPG, PNG ou WEBP",
   });
 
-const imageUrlSchema = z.string().refine(
-  (value) => value.startsWith("/") || /^https?:\/\//.test(value),
-  { message: "Informe uma URL ou caminho de imagem válido" }
-);
+const imageUrlSchema = z
+  .string()
+  .refine((value) => value.startsWith("/") || /^https?:\/\//.test(value), {
+    message: "Informe uma URL ou caminho de imagem válido",
+  });
 
-export const productFormSchema = z.object({
-  name: z.string().min(2, { message: "Informe o nome do produto" }),
-  sku: z.string().min(1, { message: "Informe o SKU" }),
-  slug: z
-    .string()
-    .min(1, { message: "Informe o slug" })
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
-      message: "Use apenas letras minúsculas, números e hífens",
-    }),
-  description: z.string().optional(),
-  price: z
-    .string()
-    .min(1, { message: "Informe o preço" })
-    .refine((value) => Number(value.replace(",", ".")) > 0, {
-      message: "Informe um preço válido",
-    }),
-  categoryId: z.string().min(1, { message: "Selecione uma categoria" }),
-  image: z.union([imageFileSchema, imageUrlSchema]).optional(),
-  isActive: z.boolean(),
-});
+export const productFormSchema = z
+  .object({
+    name: z.string().min(2, { message: "Informe o nome do produto" }),
+    sku: z.string(),
+    slug: z.string(),
+    description: z.string().optional(),
+    price: z
+      .string()
+      .min(1, { message: "Informe o preço" })
+      .refine((value) => Number(value.replace(",", ".")) > 0, {
+        message: "Informe um preço válido",
+      }),
+    categoryId: z.string().min(1, { message: "Selecione uma categoria" }),
+    image: z.union([imageFileSchema, imageUrlSchema]).optional(),
+    isActive: z.boolean(),
+  })
+  .superRefine((values, ctx) => {
+    const hasValidSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug);
+    const hasValidSku = values.sku.length > 0;
+
+    if (!hasValidSlug || !hasValidSku) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "Informe um nome válido para gerar o slug e o SKU automaticamente",
+        path: ["name"],
+      });
+    }
+  });
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;

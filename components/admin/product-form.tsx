@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { slugify } from "@/lib/utils";
+import { generateSKU, generateSlug } from "@/lib/utils";
 import {
   productFormSchema,
   type ProductFormValues,
@@ -62,7 +62,6 @@ const fieldClassName =
 export const ProductForm = ({ categories, initialData }: ProductFormProps) => {
   const router = useRouter();
   const isEditMode = Boolean(initialData);
-  const [isSlugEdited, setIsSlugEdited] = useState(isEditMode);
   const [serverError, setServerError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     initialData?.imageUrl || null
@@ -85,10 +84,13 @@ export const ProductForm = ({ categories, initialData }: ProductFormProps) => {
   const nameValue = useWatch({ control: form.control, name: "name" });
 
   useEffect(() => {
-    if (!isSlugEdited) {
-      form.setValue("slug", slugify(nameValue), { shouldValidate: false });
+    if (isEditMode) {
+      return;
     }
-  }, [nameValue, isSlugEdited, form]);
+
+    form.setValue("slug", generateSlug(nameValue), { shouldValidate: true });
+    form.setValue("sku", generateSKU(nameValue), { shouldValidate: true });
+  }, [nameValue, isEditMode, form]);
 
   const isSubmitting = form.formState.isSubmitting;
 
@@ -160,9 +162,13 @@ export const ProductForm = ({ categories, initialData }: ProductFormProps) => {
                     <Input
                       placeholder="SAL-001"
                       className={fieldClassName}
+                      disabled
                       {...field}
                     />
                   </FormControl>
+                  <FormDescription className="text-brand-muted/70">
+                    Gerado automaticamente a partir do nome
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -180,13 +186,13 @@ export const ProductForm = ({ categories, initialData }: ProductFormProps) => {
                     <Input
                       placeholder="coxinha-de-frango-com-catupiry"
                       className={fieldClassName}
+                      disabled
                       {...field}
-                      onChange={(event) => {
-                        setIsSlugEdited(true);
-                        field.onChange(event);
-                      }}
                     />
                   </FormControl>
+                  <FormDescription className="text-brand-muted/70">
+                    Gerado automaticamente a partir do nome
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

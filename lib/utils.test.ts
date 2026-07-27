@@ -1,29 +1,53 @@
 import { describe, expect, it } from "vitest";
 
-import { slugify } from "@/lib/utils";
+import { generateSKU, generateSlug } from "@/lib/utils";
 
-describe("slugify", () => {
+describe("generateSlug", () => {
   it("converte texto simples para lowercase", () => {
-    expect(slugify("Coxinha")).toBe("coxinha");
+    expect(generateSlug("Coxinha")).toBe("coxinha");
   });
 
   it("substitui espaços por hífens", () => {
-    expect(slugify("Pao de Queijo")).toBe("pao-de-queijo");
+    expect(generateSlug("Pao de Queijo")).toBe("pao-de-queijo");
   });
 
   it("remove acentos mantendo a letra base", () => {
-    expect(slugify("Pastéis Especiais")).toBe("pasteis-especiais");
+    expect(generateSlug("Pastéis Especiais")).toBe("pasteis-especiais");
   });
 
   it("remove caracteres especiais não alfanuméricos", () => {
-    expect(slugify("Combo 50% OFF!")).toBe("combo-50-off");
+    expect(generateSlug("Combo 50% OFF!")).toBe("combo-50-off");
   });
 
   it("remove hífens no início e no fim do resultado", () => {
-    expect(slugify("  -- Salgadinhos --  ")).toBe("salgadinhos");
+    expect(generateSlug("  -- Salgadinhos --  ")).toBe("salgadinhos");
   });
 
   it("retorna string vazia quando a entrada não contém caracteres válidos", () => {
-    expect(slugify("!!!")).toBe("");
+    expect(generateSlug("!!!")).toBe("");
+  });
+});
+
+describe("generateSKU", () => {
+  it("gera as iniciais das palavras em maiúsculas prefixadas com BRV-", () => {
+    expect(generateSKU("Coxinha de Frango")).toBe("BRV-CDF");
+  });
+
+  it("remove acentos mantendo a letra base", () => {
+    expect(generateSKU("Pastéis Especiais")).toBe("BRV-PE");
+  });
+
+  it("remove caracteres especiais não alfanuméricos", () => {
+    expect(generateSKU("Combo 50% OFF!")).toBe("BRV-C5O");
+  });
+
+  it("considera no máximo as 4 primeiras palavras", () => {
+    expect(generateSKU("Pao de Queijo Recheado Especial da Casa")).toBe(
+      "BRV-PDQR"
+    );
+  });
+
+  it("retorna string vazia quando a entrada não contém caracteres válidos", () => {
+    expect(generateSKU("!!!")).toBe("");
   });
 });
