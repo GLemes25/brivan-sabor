@@ -182,6 +182,8 @@ model Order {
   gatewayTransactionId String?
   trackingUrl          String?
   notes                String?
+  pixPayload           String?
+  expiresAt            DateTime?
 
   paidAt      DateTime?
   deliveredAt DateTime?

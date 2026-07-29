@@ -7,7 +7,67 @@ import {
   type OrderStatus,
   type PaymentStatus,
 } from "@/lib/generated/prisma/client";
+import { getPixPaymentState } from "@/lib/order-payment";
 import { prisma } from "@/lib/prisma";
+
+export type OrderPaymentView =
+  | { kind: "not-found" }
+  | { kind: "expired"; orderNumber: number }
+  | { kind: "paid"; orderNumber: number }
+  | {
+      kind: "pending";
+      orderNumber: number;
+      totalAmount: number;
+      pixPayload: string;
+      expiresAt: Date;
+    };
+
+export const getOrderPaymentView = async (
+  orderId: string,
+  userId: string
+): Promise<OrderPaymentView> => {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: {
+      userId: true,
+      orderNumber: true,
+      totalAmount: true,
+      paymentStatus: true,
+      pixPayload: true,
+      expiresAt: true,
+    },
+  });
+
+  if (!order || order.userId !== userId || !order.pixPayload || !order.expiresAt) {
+    return { kind: "not-found" };
+  }
+
+  const pixPaymentState = getPixPaymentState(
+    order.paymentStatus,
+    order.expiresAt
+  );
+
+  if (pixPaymentState === "not-pix") {
+    return { kind: "paid", orderNumber: order.orderNumber };
+  }
+
+  if (pixPaymentState === "expired") {
+    await prisma.order.update({
+      where: { id: orderId },
+      data: { status: "CANCELLED" },
+    });
+
+    return { kind: "expired", orderNumber: order.orderNumber };
+  }
+
+  return {
+    kind: "pending",
+    orderNumber: order.orderNumber,
+    totalAmount: Number(order.totalAmount),
+    pixPayload: order.pixPayload,
+    expiresAt: order.expiresAt,
+  };
+};
 
 export type OrderActionResult =
   | { success: true }

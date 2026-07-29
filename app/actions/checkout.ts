@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { Prisma } from "@/lib/generated/prisma/client";
+import { generatePixPayload } from "@/lib/pix";
 import { prisma } from "@/lib/prisma";
 import {
   checkoutFormSchema,
@@ -20,6 +21,7 @@ export type CheckoutActionResult =
   | { success: false; error: string };
 
 const DELIVERY_FEE = new Prisma.Decimal(5);
+const PIX_EXPIRATION_MINUTES = 10;
 
 class UnavailableProductError extends Error {}
 
@@ -111,7 +113,7 @@ export const createOrder = async (
         },
       });
 
-      return tx.order.create({
+      const createdOrder = await tx.order.create({
         data: {
           userId,
           addressId: address.id,
@@ -125,6 +127,23 @@ export const createOrder = async (
             create: orderItemsData,
           },
         },
+      });
+
+      if (paymentMethod !== "PIX") {
+        return createdOrder;
+      }
+
+      const expiresAt = new Date(
+        Date.now() + PIX_EXPIRATION_MINUTES * 60 * 1000
+      );
+      const pixPayload = generatePixPayload(
+        totalAmount.toNumber(),
+        createdOrder.id
+      );
+
+      return tx.order.update({
+        where: { id: createdOrder.id },
+        data: { pixPayload, expiresAt },
       });
     });
 
