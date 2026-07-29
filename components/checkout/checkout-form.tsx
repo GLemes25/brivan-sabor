@@ -25,6 +25,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  saveUserAddress,
+  type AddressFormValues,
+} from "@/lib/actions/address.actions";
 import { useCartStore } from "@/lib/store/cart-store";
 import {
   checkoutFormSchema,
@@ -38,7 +42,11 @@ const DELIVERY_FEE = 5.0;
 const fieldClassName =
   "border-brand-soft-black bg-brand-card text-brand-off-white placeholder:text-brand-off-white/40 focus-visible:border-brand-gold focus-visible:ring-brand-gold focus-visible:ring-offset-0";
 
-export const CheckoutForm = () => {
+type CheckoutFormProps = {
+  initialAddress: AddressFormValues | null;
+};
+
+export const CheckoutForm = ({ initialAddress }: CheckoutFormProps) => {
   const router = useRouter();
   const items = useCartStore((state) => state.items);
   const clearCart = useCartStore((state) => state.clearCart);
@@ -48,13 +56,13 @@ export const CheckoutForm = () => {
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
     defaultValues: {
-      zipCode: "",
-      street: "",
-      number: "",
-      complement: "",
-      neighborhood: "",
-      city: "",
-      state: "",
+      zipCode: initialAddress?.zipCode ?? "",
+      street: initialAddress?.street ?? "",
+      number: initialAddress?.number ?? "",
+      complement: initialAddress?.complement ?? "",
+      neighborhood: initialAddress?.neighborhood ?? "",
+      city: initialAddress?.city ?? "",
+      state: initialAddress?.state ?? "",
       paymentMethod: "PIX",
     },
   });
@@ -123,6 +131,16 @@ export const CheckoutForm = () => {
       setServerError(result.error);
       return;
     }
+
+    void saveUserAddress({
+      zipCode: values.zipCode,
+      street: values.street,
+      number: values.number,
+      complement: values.complement,
+      neighborhood: values.neighborhood,
+      city: values.city,
+      state: values.state,
+    }).catch(() => {});
 
     clearCart();
     router.push(`/order/${result.orderId}/success`);

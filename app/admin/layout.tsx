@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { auth } from "@/auth";
-import { AdminMobileHeader } from "@/components/admin/admin-mobile-header";
 import { AdminMobileNav } from "@/components/admin/admin-mobile-nav";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 
@@ -29,7 +28,6 @@ const AdminLayout = async ({ children }: AdminLayoutProps) => {
   return (
     <div className="min-h-screen bg-brand-black">
       <AdminSidebar />
-      <AdminMobileHeader />
 
       <main className="pb-24 lg:pb-0 lg:pl-64">
         <div className="mx-auto max-w-6xl px-4 py-8 lg:px-8 lg:py-10">
