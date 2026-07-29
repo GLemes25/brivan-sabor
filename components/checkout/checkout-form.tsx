@@ -143,6 +143,12 @@ export const CheckoutForm = ({ initialAddress }: CheckoutFormProps) => {
     }).catch(() => {});
 
     clearCart();
+
+    if (values.paymentMethod === "PIX") {
+      router.push(`/checkout/success/${result.orderId}`);
+      return;
+    }
+
     router.push(`/order/${result.orderId}/success`);
   };
 

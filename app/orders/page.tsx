@@ -29,6 +29,8 @@ const OrdersPage = async () => {
     id: order.id,
     orderNumber: order.orderNumber,
     status: order.status,
+    paymentStatus: order.paymentStatus,
+    expiresAt: order.expiresAt,
     totalAmount: Number(order.totalAmount),
     createdAt: order.createdAt,
     address: {

@@ -1,8 +1,14 @@
 import { ImageOff } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 import { OrderStatusBadge } from "@/components/orders/order-status-badge";
-import type { OrderStatus } from "@/lib/generated/prisma/client";
+import { Button } from "@/components/ui/button";
+import type {
+  OrderStatus,
+  PaymentStatus,
+} from "@/lib/generated/prisma/client";
+import { getPixPaymentState } from "@/lib/order-payment";
 
 export type OrderCardItem = {
   id: string;
@@ -15,6 +21,8 @@ export type OrderCardData = {
   id: string;
   orderNumber: number;
   status: OrderStatus;
+  paymentStatus: PaymentStatus;
+  expiresAt: Date | null;
   totalAmount: number;
   createdAt: Date;
   address: {
@@ -43,6 +51,13 @@ const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
 });
 
 export const OrderCard = ({ order }: OrderCardProps) => {
+  const pixPaymentState = getPixPaymentState(
+    order.paymentStatus,
+    order.expiresAt
+  );
+  const isPixPending = pixPaymentState === "pending";
+  const isPixExpired = pixPaymentState === "expired";
+
   return (
     <div className="rounded-2xl border border-brand-separator/50 bg-brand-soft-black/90 backdrop-blur-sm p-6 shadow-lg shadow-black/30">
       <div className="flex items-start justify-between gap-4 pb-4 border-b border-brand-separator/40">
@@ -54,7 +69,13 @@ export const OrderCard = ({ order }: OrderCardProps) => {
             {dateFormatter.format(order.createdAt)}
           </p>
         </div>
-        <OrderStatusBadge status={order.status} />
+        {isPixExpired ? (
+          <span className="shrink-0 text-xs font-semibold text-red-400">
+            Cancelado por falta de pagamento
+          </span>
+        ) : (
+          <OrderStatusBadge status={order.status} />
+        )}
       </div>
 
       <div className="flex flex-col gap-3 py-4">
@@ -94,6 +115,15 @@ export const OrderCard = ({ order }: OrderCardProps) => {
           {currencyFormatter.format(order.totalAmount)}
         </p>
       </div>
+
+      {isPixPending && !isPixExpired && (
+        <Button
+          asChild
+          className="mt-4 w-full bg-brand-gold text-brand-black font-semibold rounded-xl py-3 uppercase tracking-widest hover:bg-brand-warm-gold transition-colors"
+        >
+          <Link href={`/checkout/success/${order.id}`}>Pagar Agora</Link>
+        </Button>
+      )}
     </div>
   );
 };
