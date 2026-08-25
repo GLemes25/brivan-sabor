@@ -1,18 +1,18 @@
 import { MercadoPagoConfig, Preference } from "mercadopago";
 
-import type { Order, OrderItem } from "@/lib/generated/prisma/client";
+import type { OrderItem } from "@/lib/generated/prisma/client";
 
 const DELIVERY_FEE_ITEM_ID = "delivery-fee";
 
 export type PaymentPreference = {
-  preferenceId: string;
-  checkoutUrl: string;
+  id: string;
+  init_point: string;
 };
 
-function getMercadoPagoClient(
-  accessToken: string = process.env.MP_ACCESS_TOKEN ?? ""
-): MercadoPagoConfig {
-  return new MercadoPagoConfig({ accessToken });
+function getMercadoPagoClient(): MercadoPagoConfig {
+  return new MercadoPagoConfig({
+    accessToken: process.env.MP_ACCESS_TOKEN ?? "",
+  });
 }
 
 function getAppBaseUrl(): string {
@@ -20,11 +20,11 @@ function getAppBaseUrl(): string {
 }
 
 export async function createPaymentPreference(
-  order: Order,
+  orderId: string,
   items: OrderItem[],
-  mercadoPagoClient: MercadoPagoConfig = getMercadoPagoClient()
+  totalAmount: number
 ): Promise<PaymentPreference> {
-  const preferenceClient = new Preference(mercadoPagoClient);
+  const preferenceClient = new Preference(getMercadoPagoClient());
   const baseUrl = getAppBaseUrl();
 
   const preferenceItems = items.map((item) => ({
@@ -35,36 +35,49 @@ export async function createPaymentPreference(
     unit_price: item.unitPrice.toNumber(),
   }));
 
-  if (order.deliveryFee.greaterThan(0)) {
+  // totalAmount inclui a taxa de entrega, que não chega como um OrderItem —
+  // completamos a diferença como um item à parte para que a soma dos itens
+  // da preferência bata com o valor total do pedido.
+  const itemsTotal = preferenceItems.reduce(
+    (accumulatedTotal, item) => accumulatedTotal + item.unit_price * item.quantity,
+    0
+  );
+  const deliveryFee = Math.round((totalAmount - itemsTotal) * 100) / 100;
+
+  if (deliveryFee > 0) {
     preferenceItems.push({
       id: DELIVERY_FEE_ITEM_ID,
       title: "Taxa de entrega",
       quantity: 1,
       currency_id: "BRL",
-      unit_price: order.deliveryFee.toNumber(),
+      unit_price: deliveryFee,
     });
   }
 
-  const preference = await preferenceClient.create({
-    body: {
-      items: preferenceItems,
-      external_reference: order.id,
-      auto_return: "approved",
-      back_urls: {
-        success: `${baseUrl}/order/${order.id}/success`,
-        pending: `${baseUrl}/order/${order.id}/pending`,
-        failure: `${baseUrl}/order/${order.id}/failure`,
+  try {
+    const preference = await preferenceClient.create({
+      body: {
+        items: preferenceItems,
+        external_reference: orderId,
+        auto_return: "approved",
+        back_urls: {
+          success: `${baseUrl}/order/${orderId}/success`,
+          pending: `${baseUrl}/order/${orderId}/pending`,
+          failure: `${baseUrl}/order/${orderId}/failure`,
+        },
       },
-    },
-  });
+    });
 
-  const checkoutUrl = preference.sandbox_init_point ?? preference.init_point;
+    const checkoutUrl = preference.sandbox_init_point ?? preference.init_point;
 
-  if (!preference.id || !checkoutUrl) {
+    if (!preference.id || !checkoutUrl) {
+      throw new Error("Resposta incompleta do Mercado Pago.");
+    }
+
+    return { id: preference.id, init_point: checkoutUrl };
+  } catch {
     throw new Error(
-      "Mercado Pago não retornou um ID de preferência ou URL de checkout válidos."
+      "Não foi possível criar a preferência de pagamento no Mercado Pago. Tente novamente em instantes."
     );
   }
-
-  return { preferenceId: preference.id, checkoutUrl };
 }

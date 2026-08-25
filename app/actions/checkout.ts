@@ -130,14 +130,16 @@ export const createOrder = async (
       });
     });
 
-    const { preferenceId, checkoutUrl } = await createPaymentPreference(
-      order,
-      order.items
-    );
+    const { id: gatewayId, init_point: checkoutUrl } =
+      await createPaymentPreference(
+        order.id,
+        order.items,
+        order.totalAmount.toNumber()
+      );
 
     await prisma.order.update({
       where: { id: order.id },
-      data: { gatewayId: preferenceId },
+      data: { gatewayId },
     });
 
     return {
