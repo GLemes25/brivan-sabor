@@ -2,7 +2,7 @@
 
 import { auth } from "@/auth";
 import { Prisma } from "@/lib/generated/prisma/client";
-import { generatePixPayload } from "@/lib/pix";
+import { createPaymentPreference } from "@/lib/payments/mercadopago";
 import { prisma } from "@/lib/prisma";
 import {
   checkoutFormSchema,
@@ -17,11 +17,10 @@ export type CheckoutCartItem = {
 };
 
 export type CheckoutActionResult =
-  | { success: true; orderId: string; orderNumber: number }
+  | { success: true; orderId: string; orderNumber: number; checkoutUrl: string }
   | { success: false; error: string };
 
 const DELIVERY_FEE = new Prisma.Decimal(5);
-const PIX_EXPIRATION_MINUTES = 10;
 
 class UnavailableProductError extends Error {}
 
@@ -113,7 +112,7 @@ export const createOrder = async (
         },
       });
 
-      const createdOrder = await tx.order.create({
+      return tx.order.create({
         data: {
           userId,
           addressId: address.id,
@@ -127,27 +126,26 @@ export const createOrder = async (
             create: orderItemsData,
           },
         },
-      });
-
-      if (paymentMethod !== "PIX") {
-        return createdOrder;
-      }
-
-      const expiresAt = new Date(
-        Date.now() + PIX_EXPIRATION_MINUTES * 60 * 1000
-      );
-      const pixPayload = generatePixPayload(
-        totalAmount.toNumber(),
-        createdOrder.id
-      );
-
-      return tx.order.update({
-        where: { id: createdOrder.id },
-        data: { pixPayload, expiresAt },
+        include: { items: true },
       });
     });
 
-    return { success: true, orderId: order.id, orderNumber: order.orderNumber };
+    const { preferenceId, checkoutUrl } = await createPaymentPreference(
+      order,
+      order.items
+    );
+
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { gatewayId: preferenceId },
+    });
+
+    return {
+      success: true,
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      checkoutUrl,
+    };
   } catch (error) {
     if (error instanceof UnavailableProductError) {
       return {
