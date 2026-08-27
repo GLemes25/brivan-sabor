@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
@@ -39,6 +38,10 @@ import { fetchAddressByCep, sanitizeCep } from "@/lib/viacep";
 
 const DELIVERY_FEE = 5.0;
 
+function redirectToExternalUrl(url: string): void {
+  window.location.href = url;
+}
+
 const fieldClassName =
   "border-brand-soft-black bg-brand-card text-brand-off-white placeholder:text-brand-off-white/40 focus-visible:border-brand-gold focus-visible:ring-brand-gold focus-visible:ring-offset-0";
 
@@ -47,7 +50,6 @@ type CheckoutFormProps = {
 };
 
 export const CheckoutForm = ({ initialAddress }: CheckoutFormProps) => {
-  const router = useRouter();
   const items = useCartStore((state) => state.items);
   const clearCart = useCartStore((state) => state.clearCart);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -144,12 +146,7 @@ export const CheckoutForm = ({ initialAddress }: CheckoutFormProps) => {
 
     clearCart();
 
-    if (values.paymentMethod === "PIX") {
-      router.push(`/checkout/success/${result.orderId}`);
-      return;
-    }
-
-    router.push(`/order/${result.orderId}/success`);
+    redirectToExternalUrl(result.checkoutUrl);
   };
 
   if (items.length === 0) {

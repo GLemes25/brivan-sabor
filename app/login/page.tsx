@@ -1,8 +1,10 @@
+import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
 import { LoginForm } from "@/components/auth/login-form";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Entrar",
@@ -17,12 +19,16 @@ const LoginPage = () => {
           <LoginForm />
         </Suspense>
 
-        <Link
-          href="/"
-          className="mt-8 text-xs text-brand-muted hover:text-brand-gold transition-colors tracking-wide"
+        <Button
+          asChild
+          variant="ghost"
+          className="mt-8 h-auto p-0 text-xs text-brand-muted hover:bg-transparent hover:text-brand-gold transition-colors tracking-wide"
         >
-          Voltar para o cardápio
-        </Link>
+          <Link href="/">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Voltar para o cardápio
+          </Link>
+        </Button>
       </div>
     </div>
   );

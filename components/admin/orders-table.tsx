@@ -19,6 +19,7 @@ export type OrderRow = {
   orderNumber: number;
   createdAt: Date;
   customerName: string;
+  customerPhone: string | null;
   itemsCount: number;
   totalAmount: number;
   paymentStatus: PaymentStatus;
@@ -73,7 +74,7 @@ export const OrdersTable = ({ orders }: OrdersTableProps) => {
             >
               <TableCell>
                 <p className="font-medium text-brand-off-white">
-                  #{order.orderNumber}
+                  #{order.id.slice(-5).toUpperCase()}
                 </p>
                 <p className="text-xs text-brand-muted">
                   {order.itemsCount}{" "}
@@ -83,8 +84,11 @@ export const OrdersTable = ({ orders }: OrdersTableProps) => {
               <TableCell className="text-brand-muted">
                 {dateFormatter.format(order.createdAt)}
               </TableCell>
-              <TableCell className="text-brand-off-white">
-                {order.customerName}
+              <TableCell>
+                <p className="text-brand-off-white">{order.customerName}</p>
+                <p className="text-xs text-brand-muted">
+                  {order.customerPhone ?? "Sem telefone"}
+                </p>
               </TableCell>
               <TableCell className="text-brand-off-white">
                 {currencyFormatter.format(order.totalAmount)}
