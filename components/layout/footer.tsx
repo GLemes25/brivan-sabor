@@ -61,11 +61,13 @@ export const Footer = () => {
             <div className="flex items-start gap-3 text-brand-off-white/70 text-xs md:text-base group md:hover:-translate-y-1 transition-all duration-300 cursor-default">
               <MapPin className="w-4 h-4 md:w-6 md:h-6 shrink-0 mt-0.5 md:group-hover:text-brand-gold transition-colors" />
               <p className="text-left">
-                Rua das Flores, 123
+                R. Joaquim Nabuco, 50
                 <br />
                 <span className="whitespace-nowrap">
-                  Jardins - São Paulo, SP
+                  Amambai - Campo Grande, MS
                 </span>
+                <br />
+                <span className="whitespace-nowrap">79008-340</span>
               </p>
             </div>
           </div>

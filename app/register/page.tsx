@@ -1,7 +1,9 @@
+import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
 import { RegisterForm } from "@/components/auth/register-form";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Cadastre-se",
@@ -14,12 +16,16 @@ const RegisterPage = () => {
       <div className="w-full max-w-sm flex flex-col items-center">
         <RegisterForm />
 
-        <Link
-          href="/"
-          className="mt-8 text-xs text-brand-muted hover:text-brand-gold transition-colors tracking-wide"
+        <Button
+          asChild
+          variant="ghost"
+          className="mt-8 h-auto p-0 text-xs text-brand-muted hover:bg-transparent hover:text-brand-gold transition-colors tracking-wide"
         >
-          Voltar para o cardápio
-        </Link>
+          <Link href="/">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Voltar para o cardápio
+          </Link>
+        </Button>
       </div>
     </div>
   );

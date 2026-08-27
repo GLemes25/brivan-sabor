@@ -18,6 +18,7 @@ const AdminOrdersPage = async () => {
     orderNumber: order.orderNumber,
     createdAt: order.createdAt,
     customerName: order.user.name,
+    customerPhone: order.user.phone,
     itemsCount: order.items.reduce((acc, item) => acc + item.quantity, 0),
     totalAmount: Number(order.totalAmount),
     paymentStatus: order.paymentStatus,
