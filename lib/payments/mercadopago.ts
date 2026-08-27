@@ -19,10 +19,16 @@ function getAppBaseUrl(): string {
   return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 }
 
+function getAutoReturn(baseUrl: string): "approved" | undefined {
+  const isLocalBaseUrl = baseUrl.includes("localhost");
+
+  return isLocalBaseUrl ? undefined : "approved";
+}
+
 export async function createPaymentPreference(
   orderId: string,
   items: OrderItem[],
-  totalAmount: number
+  totalAmount: number,
 ): Promise<PaymentPreference> {
   const preferenceClient = new Preference(getMercadoPagoClient());
   const baseUrl = getAppBaseUrl();
@@ -39,8 +45,9 @@ export async function createPaymentPreference(
   // completamos a diferença como um item à parte para que a soma dos itens
   // da preferência bata com o valor total do pedido.
   const itemsTotal = preferenceItems.reduce(
-    (accumulatedTotal, item) => accumulatedTotal + item.unit_price * item.quantity,
-    0
+    (accumulatedTotal, item) =>
+      accumulatedTotal + item.unit_price * item.quantity,
+    0,
   );
   const deliveryFee = Math.round((totalAmount - itemsTotal) * 100) / 100;
 
@@ -59,7 +66,7 @@ export async function createPaymentPreference(
       body: {
         items: preferenceItems,
         external_reference: orderId,
-        auto_return: "approved",
+        auto_return: getAutoReturn(baseUrl),
         back_urls: {
           success: `${baseUrl}/order/${orderId}/success`,
           pending: `${baseUrl}/order/${orderId}/pending`,
@@ -77,7 +84,7 @@ export async function createPaymentPreference(
     return { id: preference.id, init_point: checkoutUrl };
   } catch {
     throw new Error(
-      "Não foi possível criar a preferência de pagamento no Mercado Pago. Tente novamente em instantes."
+      "Não foi possível criar a preferência de pagamento no Mercado Pago. Tente novamente em instantes.",
     );
   }
 }

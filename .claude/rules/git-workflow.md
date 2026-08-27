@@ -15,7 +15,9 @@
 ## Deploy
 
 - O deploy para produção (`main`) é feito **exclusivamente** via Merge Request / Pull Request da `dev` para a `main`.
-- Nenhum push direto para `main` é permitido, mesmo em situações de urgência — abra o PR.
+- Nenhum push ou pull direto para `main` é permitido, mesmo em situações de urgência — abra o PR.
+- Uma vez que o PR de `dev` para `main` esteja aberto, limpo (`mergeable`) e com os checks passando, o merge **pode ser aprovado e executado via `gh pr merge`** (ou pelo botão de merge do GitHub) — isso conta como "via Pull Request revisado no GitHub", não como merge local.
+- O que continua proibido é qualquer caminho que **contorne o PR**: `git push origin dev:main`, `git push origin main`, `git merge`/`git pull` local seguido de push para `main`, ou commit direto na branch `main`.
 
 ## Variáveis de Ambiente e Banco de Dados
 
