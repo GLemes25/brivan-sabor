@@ -1,4 +1,4 @@
-import { MercadoPagoConfig, Preference } from "mercadopago";
+import { MercadoPagoConfig, Payment, Preference } from "mercadopago";
 
 import type { OrderItem } from "@/lib/generated/prisma/client";
 
@@ -7,6 +7,17 @@ const DELIVERY_FEE_ITEM_ID = "delivery-fee";
 export type PaymentPreference = {
   id: string;
   init_point: string;
+};
+
+export type PixPayment = {
+  id: string;
+  qr_code: string;
+  qr_code_base64: string;
+};
+
+export type PixCustomer = {
+  email: string;
+  name: string;
 };
 
 function getMercadoPagoClient(): MercadoPagoConfig {
@@ -85,6 +96,46 @@ export async function createPaymentPreference(
   } catch {
     throw new Error(
       "Não foi possível criar a preferência de pagamento no Mercado Pago. Tente novamente em instantes.",
+    );
+  }
+}
+
+export async function createPixPayment(
+  orderId: string,
+  amount: number,
+  customer: PixCustomer,
+): Promise<PixPayment> {
+  const paymentClient = new Payment(getMercadoPagoClient());
+
+  try {
+    const response = await paymentClient.create({
+      body: {
+        transaction_amount: amount,
+        payment_method_id: "pix",
+        payer: {
+          email: customer.email,
+          first_name: customer.name,
+        },
+        external_reference: orderId,
+      },
+    });
+
+    const qrCode = response.point_of_interaction?.transaction_data?.qr_code;
+    const qrCodeBase64 =
+      response.point_of_interaction?.transaction_data?.qr_code_base64;
+
+    if (!response.id || !qrCode || !qrCodeBase64) {
+      throw new Error("Resposta incompleta do Mercado Pago.");
+    }
+
+    return {
+      id: String(response.id),
+      qr_code: qrCode,
+      qr_code_base64: qrCodeBase64,
+    };
+  } catch {
+    throw new Error(
+      "Não foi possível gerar o pagamento PIX no Mercado Pago. Tente novamente em instantes.",
     );
   }
 }

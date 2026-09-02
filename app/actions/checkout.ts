@@ -2,7 +2,10 @@
 
 import { auth } from "@/auth";
 import { Prisma } from "@/lib/generated/prisma/client";
-import { createPaymentPreference } from "@/lib/payments/mercadopago";
+import {
+  createPaymentPreference,
+  createPixPayment,
+} from "@/lib/payments/mercadopago";
 import { prisma } from "@/lib/prisma";
 import {
   checkoutFormSchema,
@@ -129,6 +132,29 @@ export const createOrder = async (
         include: { items: true },
       });
     });
+
+    if (paymentMethod === "PIX") {
+      const { id: gatewayId, qr_code: pixPayload } = await createPixPayment(
+        order.id,
+        order.totalAmount.toNumber(),
+        {
+          email: session.user.email ?? "",
+          name: session.user.name ?? "",
+        }
+      );
+
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { gatewayId, pixPayload },
+      });
+
+      return {
+        success: true,
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        checkoutUrl: `/checkout/success/${order.id}`,
+      };
+    }
 
     const { id: gatewayId, init_point: checkoutUrl } =
       await createPaymentPreference(
