@@ -110,11 +110,12 @@ export async function createPixPayment(
   try {
     const response = await paymentClient.create({
       body: {
-        transaction_amount: amount,
+        transaction_amount: Number(Number(amount).toFixed(2)),
         payment_method_id: "pix",
         payer: {
-          email: customer.email,
-          first_name: customer.name,
+          email: customer.email || "teste@sandbox.com",
+          first_name: customer.name || "Comprador",
+          identification: { type: "CPF", number: "19119119100" },
         },
         external_reference: orderId,
       },
@@ -133,9 +134,26 @@ export async function createPixPayment(
       qr_code: qrCode,
       qr_code_base64: qrCodeBase64,
     };
-  } catch {
-    throw new Error(
-      "Não foi possível gerar o pagamento PIX no Mercado Pago. Tente novamente em instantes.",
-    );
+  } catch (error: unknown) {
+    console.error("🚨 [MERCADO PAGO PIX ERROR]:", error);
+
+    const errorDetails =
+      error instanceof Error
+        ? { message: error.message, stack: error.stack, cause: error.cause }
+        : error;
+
+    try {
+      console.error(
+        "🚨 [MERCADO PAGO PIX ERROR] details:",
+        JSON.stringify(errorDetails, null, 2),
+      );
+    } catch {
+      console.error("🚨 [MERCADO PAGO PIX ERROR] details:", errorDetails);
+    }
+
+    const errorMessage =
+      error instanceof Error ? error.message : JSON.stringify(error);
+
+    throw new Error("Erro detalhado do MP: " + errorMessage);
   }
 }
