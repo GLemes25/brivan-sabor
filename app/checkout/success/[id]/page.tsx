@@ -7,6 +7,7 @@ import { getOrderPaymentView } from "@/app/actions/order";
 import { auth } from "@/auth";
 import { Countdown } from "@/components/checkout/countdown";
 import { PixPaymentPanel } from "@/components/checkout/pix-payment-panel";
+import { RetryPaymentButton } from "@/components/checkout/retry-payment-button";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/config/site";
 
@@ -61,21 +62,31 @@ const CheckoutSuccessPage = async ({ params }: CheckoutSuccessPageProps) => {
           <AlertTriangle className="w-12 h-12 text-red-400" />
         </div>
         <h1 className="font-serif text-3xl text-brand-off-white mb-4">
-          Pedido Expirado
+          Código PIX Expirado
         </h1>
         <p className="text-brand-muted mb-10 max-w-md mx-auto">
           O prazo de 10 minutos para pagamento do pedido{" "}
           <span className="text-brand-gold font-semibold">
             #{paymentView.orderNumber}
           </span>{" "}
-          expirou e ele foi cancelado. Faça um novo pedido para continuar.
+          expirou. Seu pedido continua reservado — gere um novo código PIX ou
+          escolha outra forma de pagamento para concluir.
         </p>
-        <Button
-          asChild
-          className="bg-brand-gold text-brand-black px-8 py-4 rounded-xl font-semibold uppercase tracking-widest hover:bg-brand-warm-gold transition-colors"
-        >
-          <Link href="/">Fazer Novo Pedido</Link>
-        </Button>
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <RetryPaymentButton
+            orderId={id}
+            paymentMethod="PIX"
+            label="Gerar Novo QR Code PIX"
+            className="bg-red-500 text-brand-off-white px-8 py-4 rounded-xl font-semibold uppercase tracking-widest hover:bg-red-600 transition-colors"
+          />
+          <RetryPaymentButton
+            orderId={id}
+            paymentMethod="CREDIT_CARD"
+            label="Pagar com Cartão"
+            variant="outline"
+            className="border-brand-separator/50 bg-transparent text-brand-off-white px-8 py-4 rounded-xl font-semibold uppercase tracking-widest hover:bg-brand-soft-black/90 hover:text-brand-gold transition-colors"
+          />
+        </div>
       </div>
     );
   }

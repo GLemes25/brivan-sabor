@@ -52,11 +52,6 @@ export const getOrderPaymentView = async (
   }
 
   if (pixPaymentState === "expired") {
-    await prisma.order.update({
-      where: { id: orderId },
-      data: { status: "CANCELLED" },
-    });
-
     return { kind: "expired", orderNumber: order.orderNumber };
   }
 

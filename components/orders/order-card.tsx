@@ -2,6 +2,7 @@ import { ImageOff } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { RetryPaymentButton } from "@/components/checkout/retry-payment-button";
 import { OrderStatusBadge } from "@/components/orders/order-status-badge";
 import { Button } from "@/components/ui/button";
 import type {
@@ -71,7 +72,7 @@ export const OrderCard = ({ order }: OrderCardProps) => {
         </div>
         {isPixExpired ? (
           <span className="shrink-0 text-xs font-semibold text-red-400">
-            Cancelado por falta de pagamento
+            PIX Expirado
           </span>
         ) : (
           <OrderStatusBadge status={order.status} />
@@ -123,6 +124,15 @@ export const OrderCard = ({ order }: OrderCardProps) => {
         >
           <Link href={`/checkout/success/${order.id}`}>Pagar Agora</Link>
         </Button>
+      )}
+
+      {isPixExpired && (
+        <RetryPaymentButton
+          orderId={order.id}
+          paymentMethod="PIX"
+          label="Gerar Novo QR Code PIX"
+          className="mt-4 w-full bg-red-500 text-brand-off-white font-semibold rounded-xl py-3 uppercase tracking-widest hover:bg-red-600 transition-colors"
+        />
       )}
     </div>
   );
