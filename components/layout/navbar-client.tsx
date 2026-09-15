@@ -40,7 +40,7 @@ export const NavbarClient = ({ isAuthenticated, isAdmin }: NavbarClientProps) =>
               width={200}
               height={200}
               priority
-              className="h-12 w-12 object-contain"
+              className="h-16 w-16 object-contain"
             />
           </Link>
 
