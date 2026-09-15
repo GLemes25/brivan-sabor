@@ -21,9 +21,7 @@ export type CheckoutCartItem = {
   addons: string[];
 };
 
-export type CheckoutActionResult =
-  | { success: true; orderId: string; orderNumber: number; checkoutUrl: string }
-  | { success: false; error: string };
+export type CheckoutActionResult = { error: string } | { url: string };
 
 const DELIVERY_FEE = new Prisma.Decimal(5);
 const PIX_EXPIRATION_MINUTES = 10;
@@ -38,7 +36,6 @@ export const createOrder = async (
 
   if (!session?.user?.id) {
     return {
-      success: false,
       error: "Você precisa estar autenticado para finalizar o pedido.",
     };
   }
@@ -47,13 +44,12 @@ export const createOrder = async (
 
   if (!parsedCheckout.success) {
     return {
-      success: false,
       error: "Dados de entrega ou pagamento inválidos. Verifique os campos.",
     };
   }
 
   if (cartItems.length === 0) {
-    return { success: false, error: "Seu carrinho está vazio." };
+    return { error: "Seu carrinho está vazio." };
   }
 
   const userId = session.user.id;
@@ -155,12 +151,7 @@ export const createOrder = async (
         data: { gatewayId, pixPayload, expiresAt },
       });
 
-      return {
-        success: true,
-        orderId: order.id,
-        orderNumber: order.orderNumber,
-        checkoutUrl: `/checkout/success/${order.id}`,
-      };
+      return { url: `/checkout/success/${order.id}` };
     }
 
     const { id: gatewayId, init_point: checkoutUrl } =
@@ -175,28 +166,25 @@ export const createOrder = async (
       data: { gatewayId },
     });
 
-    return {
-      success: true,
-      orderId: order.id,
-      orderNumber: order.orderNumber,
-      checkoutUrl,
-    };
+    return { url: checkoutUrl };
   } catch (error) {
     if (error instanceof UnavailableProductError) {
       return {
-        success: false,
         error:
           "Um ou mais produtos do carrinho não estão mais disponíveis. Atualize seu carrinho e tente novamente.",
       };
     }
 
-    throw error;
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "Erro desconhecido ao processar pagamento",
+    };
   }
 };
 
-export type RetryPaymentResult =
-  | { success: true; checkoutUrl: string }
-  | { success: false; error: string };
+export type RetryPaymentResult = { error: string } | { url: string };
 
 export const retryPayment = async (
   orderId: string,
@@ -206,7 +194,6 @@ export const retryPayment = async (
 
   if (!session?.user?.id) {
     return {
-      success: false,
       error: "Você precisa estar autenticado para gerar um novo pagamento.",
     };
   }
@@ -217,12 +204,11 @@ export const retryPayment = async (
   });
 
   if (!order || order.userId !== session.user.id) {
-    return { success: false, error: "Pedido não encontrado." };
+    return { error: "Pedido não encontrado." };
   }
 
   if (order.status !== "PENDING" || order.paymentStatus !== "PENDING") {
     return {
-      success: false,
       error: "Este pedido já foi pago ou cancelado.",
     };
   }
@@ -248,7 +234,7 @@ export const retryPayment = async (
 
       revalidatePath(`/checkout/success/${order.id}`);
 
-      return { success: true, checkoutUrl: `/checkout/success/${order.id}` };
+      return { url: `/checkout/success/${order.id}` };
     }
 
     const { id: gatewayId, init_point: checkoutUrl } =
@@ -265,12 +251,13 @@ export const retryPayment = async (
 
     revalidatePath(`/checkout/success/${order.id}`);
 
-    return { success: true, checkoutUrl };
+    return { url: checkoutUrl };
   } catch (error) {
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-
-    throw error;
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "Erro desconhecido ao processar pagamento",
+    };
   }
 };

@@ -28,15 +28,15 @@ export const RetryPaymentButton = ({
   const handleRetry = async () => {
     setIsRetrying(true);
 
-    const result = await retryPayment(orderId, paymentMethod);
+    const response = await retryPayment(orderId, paymentMethod);
 
-    if (!result.success) {
-      toast.error(result.error);
+    if ("error" in response) {
+      toast.error("Erro no Pagamento", { description: response.error });
       setIsRetrying(false);
       return;
     }
 
-    window.location.href = result.checkoutUrl;
+    window.location.href = response.url;
   };
 
   return (

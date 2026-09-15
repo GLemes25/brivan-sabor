@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
 
 import { createOrder } from "@/app/actions/checkout";
 import { Button } from "@/components/ui/button";
@@ -52,7 +53,6 @@ type CheckoutFormProps = {
 export const CheckoutForm = ({ initialAddress }: CheckoutFormProps) => {
   const items = useCartStore((state) => state.items);
   const clearCart = useCartStore((state) => state.clearCart);
-  const [serverError, setServerError] = useState<string | null>(null);
   const [isLoadingCep, setIsLoadingCep] = useState(false);
 
   const form = useForm<CheckoutFormValues>({
@@ -117,9 +117,7 @@ export const CheckoutForm = ({ initialAddress }: CheckoutFormProps) => {
   const total = items.length > 0 ? subtotal + DELIVERY_FEE : 0;
 
   const onSubmit = async (values: CheckoutFormValues) => {
-    setServerError(null);
-
-    const result = await createOrder(
+    const response = await createOrder(
       values,
       items.map((item) => ({
         productId: item.productId,
@@ -129,8 +127,8 @@ export const CheckoutForm = ({ initialAddress }: CheckoutFormProps) => {
       }))
     );
 
-    if (!result.success) {
-      setServerError(result.error);
+    if ("error" in response) {
+      toast.error("Erro no Pagamento", { description: response.error });
       return;
     }
 
@@ -146,7 +144,7 @@ export const CheckoutForm = ({ initialAddress }: CheckoutFormProps) => {
 
     clearCart();
 
-    redirectToExternalUrl(result.checkoutUrl);
+    redirectToExternalUrl(response.url);
   };
 
   if (items.length === 0) {
@@ -364,10 +362,6 @@ export const CheckoutForm = ({ initialAddress }: CheckoutFormProps) => {
               )}
             />
           </div>
-
-          {serverError && (
-            <p className="text-sm text-red-400/90">{serverError}</p>
-          )}
 
           <Button
             type="submit"
