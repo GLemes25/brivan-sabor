@@ -24,6 +24,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             src={product.images[0]}
             alt={product.name}
             fill
+            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
             className="object-cover transition-transform duration-700 group-hover:scale-110"
           />
         </div>
