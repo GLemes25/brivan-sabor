@@ -113,9 +113,8 @@ export async function createPixPayment(
         transaction_amount: Number(Number(amount).toFixed(2)),
         payment_method_id: "pix",
         payer: {
-          email: customer.email || "teste@sandbox.com",
-          first_name: customer.name || "Comprador",
-          identification: { type: "CPF", number: "19119119100" },
+          email: customer.email,
+          first_name: customer.name,
         },
         external_reference: orderId,
       },
