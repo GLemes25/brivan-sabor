@@ -39,7 +39,8 @@ export const NavbarClient = ({ isAuthenticated, isAdmin }: NavbarClientProps) =>
               alt={`${siteConfig.name} Logo`}
               width={200}
               height={200}
-              className="object-contain"
+              priority
+              className="h-12 w-12 object-contain"
             />
           </Link>
 
